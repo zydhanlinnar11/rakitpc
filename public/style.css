@@ -1,0 +1,137 @@
+:root {
+    --header-color: #6200ee;
+    --header-text-color: white;
+    --header-color-hover: #3700b3;
+    --header-divider-color: var(--header-color-hover);
+    --transition-delay: 300ms;
+    --main-bg-color: #f5f6fa;
+    --content-bg-color: white;
+    --footer-text-color: rgba(0, 0, 0, 0.6);
+    --footer-horizontal-divider-color: rgba(0, 0, 0, 0.3);
+    --footer-vertical-divider-color: var(--footer-horizontal-divider-color);
+}
+
+html {
+    background: var(--main-bg-color);
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    background: var(--main-bg-color);
+}
+
+header {
+    height: 64px;
+    width: 100%;
+    display: flex;
+    background: var(--header-color);
+    color: var(--header-text-color);
+    justify-content: space-between;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+    font-family: "Roboto", sans-serif;
+    position: fixed;
+    top: 0;
+    z-index: 2;
+}
+
+#main-title {
+    margin-left: 5%;
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: 22px;
+    font-weight: 400;
+}
+
+.nav-button {
+    height: 100%;
+    border: none;
+    margin: 0;
+    width: 108px;
+    font-size: 16px;
+    text-transform: uppercase;
+    color: var(--header-text-color);
+    font-weight: 500;
+    background: rgba(0, 0, 0, 0);
+}
+
+.nav-button:hover {
+    transition: background var(--transition-delay);
+    background: var(--header-color-hover);
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+}
+
+.nav-vertical-divider {
+    height: 40%;
+    background-color: var(--header-divider-color);
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 1px;
+}
+
+main {
+    background: var(--main-bg-color);
+    padding-top: 80px;
+    padding-bottom: 16px;
+    width: 100%;
+    margin: auto;
+}
+
+.card-container {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-top: 24px;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    background: var(--content-bg-color);
+    /* height: 500px; */
+    border-radius: 10px;
+}
+
+.card-container-title {
+    font-size: 32px;
+    font-weight: 300;
+}
+
+footer {
+    background: var(--content-bg-color);
+    color: var(--footer-text-color);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 48px;
+    z-index: 2;
+}
+
+#horizontal-bar {
+    height: 1px;
+    width: 100%;
+    background: var(--footer-horizontal-divider-color);
+}
+
+#vertical-bar {
+    height: 40%;
+    width: 1px;
+    background: var(--footer-vertical-divider-color);
+    margin: auto;
+}
+
+#footer-container {
+    height: 47px;
+    display: flex;
+}
+
+.footer-text {
+    font-family: "Roboto", sans-serif;
+    text-align: center;
+    margin: auto;
+    width: 50%;
+}
