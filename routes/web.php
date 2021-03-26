@@ -16,3 +16,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('home');
 });
+
+
+
+Route::get('/prosesor', function () {
+    return view('prosesor');
+});
