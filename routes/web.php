@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ItemController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\SimulasiController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,12 +18,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('home');
+Route::get('/', [HomeController::class, 'show']);
+
+Route::get('/item', function (Request $request) {
+    $itemcontroller = new ItemController;
+    if($request->input('kategori') != '')
+        return $itemcontroller->show_items_by_category($request);
+    // else return $itemcontroller->get_all_items();
 });
 
+Route::get('/kategori', [KategoriController::class, 'show_all']);
 
+Route::get('/simulasi', [SimulasiController::class, 'simulasi']);
 
-Route::get('/prosesor', function () {
-    return view('prosesor');
-});
+// Auth::routes();
+
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

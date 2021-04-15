@@ -12,7 +12,7 @@
                     <img src="https://storage.googleapis.com/zydhan-web.appspot.com/gambar-biner.webp" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title">{{$key["nama"]}}</h5>
-                        <a href="kategori/{{$key["url"]}}" class="btn btn-primary streched-link">{{$key["nama"]}}</a>
+                        <a href="item?kategori={{$key["url"]}}" class="btn btn-primary streched-link">{{$key["nama"]}}</a>
                     </div>
                 </div>
             </div>
