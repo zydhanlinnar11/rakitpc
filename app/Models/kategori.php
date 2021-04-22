@@ -9,6 +9,8 @@ class kategori extends Model
 {
     use HasFactory;
 
+    public $timestamps = true;
+
     public function item() {
         return $this->hasMany(item::class);
     }

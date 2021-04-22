@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\KategoriController;
@@ -18,7 +19,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [HomeController::class, 'show']);
+Route::get('/', function() {
+    return redirect('/kategori');
+});
 
 Route::get('/item', function (Request $request) {
     $itemcontroller = new ItemController;
@@ -30,6 +33,16 @@ Route::get('/item', function (Request $request) {
 Route::get('/kategori', [KategoriController::class, 'show_all']);
 
 Route::get('/simulasi', [SimulasiController::class, 'simulasi']);
+
+Route::get('/admin', [AdminController::class, 'dashboard']);
+
+Route::get('/admin/daftar-produk', [AdminController::class, 'daftar_produk']);
+
+Route::get('/admin/tambah-kategori', [AdminController::class, 'tambah_kategori']);
+
+Route::get('/admin/daftar-kategori', [AdminController::class, 'daftar_kategori']);
+
+Route::get('/admin/edit-kategori', [AdminController::class, 'edit_kategori']);
 
 // Auth::routes();
 

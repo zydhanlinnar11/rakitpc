@@ -7,7 +7,7 @@
     <div class="row">
 
         @foreach ($list_kategori as $key)
-            <div class="col-xxl-1 col-xl-2 col-lg-3 col-md-4 col-sm-6">
+            <div class="col-xxl-1 col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-3">
                 <div class="card text-center col-12" style="margin-bottom: 16px">
                     <img src="https://storage.googleapis.com/zydhan-web.appspot.com/gambar-biner.webp" class="card-img-top" alt="...">
                     <div class="card-body">

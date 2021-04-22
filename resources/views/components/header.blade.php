@@ -4,5 +4,7 @@
         <button class="nav-button">How-to</button>
         <div class="nav-vertical-divider"></div>
         <button class="nav-button" id="nav-button-simulasi">Simulasi</button>
+        <div class="nav-vertical-divider"></div>
+        <button class="nav-button" id="nav-button-admin">Admin</button>
     </nav>
 </header>
