@@ -4,7 +4,7 @@
 <div class="card-container">
     <h1 class="card-container-title">
         <a href="./" class="fas fa-arrow-left" style="text-decoration: none; color: #212529"></a>
-        Daftar produk:
+        Daftar kategori:
     </h1>
     <hr>
     <div class="row">

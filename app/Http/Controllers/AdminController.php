@@ -28,7 +28,7 @@ class AdminController extends Controller
             ],
             [
                 'imageURL' => $contoh_image_url,
-                'title' => 'Tambah Kategori',
+                'title' => 'Tambah kategori',
                 'description' => 'Tambahkan kategori di database toko.',
                 'buttonTitle' => 'Tambah',
                 'slug' => 'tambah-kategori'
@@ -39,10 +39,32 @@ class AdminController extends Controller
                 'description' => 'Lihat atau ubah kategori di database toko.',
                 'buttonTitle' => 'Kategori',
                 'slug' => 'daftar-kategori'
+            ],
+            [
+                'imageURL' => $contoh_image_url,
+                'title' => 'Tambah subkategori',
+                'description' => 'Tambahkan subkategori di database toko.',
+                'buttonTitle' => 'Tambah',
+                'slug' => 'tambah-subkategori'
+            ],
+            [
+                'imageURL' => $contoh_image_url,
+                'title' => 'Tambah brand',
+                'description' => 'Tambahkan brand di database toko.',
+                'buttonTitle' => 'Tambah',
+                'slug' => 'tambah-brand'
             ]
         ];
 
         return view('admin-dashboard', compact('dashboard'));
+    }
+
+    public function tambah_produk() {
+        $list_kategori = DB::table('kategoris')->get();
+        $list_brand = DB::table('brands')->get();
+        $list_subkategori = DB::table('subcategories')->get();
+
+        return view('admin-tambah-produk', compact('list_kategori', 'list_subkategori', 'list_brand'));
     }
 
     public function daftar_produk(Request $request) {
@@ -76,5 +98,15 @@ class AdminController extends Controller
 
         $kategori = $kategori[0];
         return view('admin-edit-kategori', compact('kategori'));
+    }
+
+    public function tambah_subkategori() {
+        $list_kategori = DB::table('kategoris')->get();
+
+        return view('admin-tambah-subkategori', compact('list_kategori'));
+    }
+
+    public function tambah_brand() {
+        return view('admin-tambah-brand');
     }
 }

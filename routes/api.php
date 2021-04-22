@@ -82,6 +82,111 @@ Route::patch('/admin/edit-kategori', function(Request $request) {
     ], 200);
 });
 
+Route::post('/admin/tambah-subkategori', function(Request $request) {
+    $nama = $request->nama;
+    $slug = Str::slug($nama);
+    $deskripsi = $request->deskripsi;
+    $id_kategori = $request->idKategori;
+    $tabel_subkategori = DB::table('subcategories');
+
+    if($tabel_subkategori->where('slug', '=', $slug)->get()->count() > 0)
+        return response()->json(['message' => 'Subcategory already exists.'], 400);
+
+    if($deskripsi == NULL)
+        $deskripsi = '-';
+        
+    $tabel_subkategori->upsert(
+        [
+            'nama' => $nama,
+            'slug' => $slug,
+            'deskripsi' => $deskripsi,
+            'id_kategori' => $id_kategori
+        ],
+        ['slug']
+    );
+
+    return response()->json(['message' => 'Subcategory added.'], 200);
+});
+
+Route::get('/subkategori', function(Request $request) {
+    $tabel_subkategori = DB::table('subcategories')->select(['id','nama']);
+    $id_kategori = $request->input('id_kategori');
+
+    if($id_kategori != '')
+        $tabel_subkategori->where('id_kategori', '=', $id_kategori);
+
+    $tabel_subkategori = $tabel_subkategori->get();
+
+    return $tabel_subkategori;
+});
+
+Route::post('/admin/tambah-brand', function(Request $request) {
+    $nama = $request->nama;
+    $deskripsi = $request->deskripsi;
+    $tabel_brand = DB::table('brands');
+
+    if($tabel_brand->where('nama', '=', $nama)->get()->count() > 0)
+        return response()->json(['message' => 'Brand already exists.'], 400);
+
+    if($deskripsi == NULL)
+        $deskripsi = '-';
+        
+    $tabel_brand->upsert(
+        [
+            'nama' => $nama,
+            'deskripsi' => $deskripsi
+        ],
+        ['nama']
+    );
+
+    return response()->json(['message' => 'Brand added.'], 200);
+});
+
+Route::post('/admin/tambah-produk', function(Request $request) {
+    $nama = $request->nama;
+    $berat = $request->berat;
+    $harga = $request->harga;
+    $URL_gambar = $request->URLGambar;
+    $id_kategori = $request->kategori;
+    $id_brand = $request->brand;
+    $id_subkategori = $request->subkategori;
+    $deskripsi = $request->deskripsi;
+    $tabel_item = DB::table('items');
+
+    if($tabel_item->where('nama', '=', $nama)->get()->count() > 0)
+        return response()->json(['message' => 'Product already exists.'], 400);
+
+    if($deskripsi == NULL)
+        $deskripsi = '-';
+
+    // return response()->json([
+    //     'nama' => $nama,
+    //     'berat' => $berat,
+    //     'harga' => $harga,
+    //     'URL_gambar' => $URL_gambar,
+    //     'id_kategori' => $id_kategori,
+    //     'id_brand' => $id_brand,
+    //     'id_subkategori' => $id_subkategori,
+    //     'deskripsi' => $deskripsi
+    // ], 200);
+        
+    $tabel_item->upsert(
+        [
+            'nama' => $nama,
+            'berat' => $berat,
+            'harga' => $harga,
+            'URL_gambar' => $URL_gambar,
+            'id_kategori' => $id_kategori,
+            'id_brand' => $id_brand,
+            'id_subkategori' => $id_subkategori,
+            'deskripsi' => $deskripsi
+        ],
+        ['nama']
+    );
+
+    return response()->json(['message' => 'Brand added.'], 200);
+});
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

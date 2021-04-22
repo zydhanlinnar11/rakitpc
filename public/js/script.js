@@ -33,6 +33,7 @@ function showAlert(type = new String(), message = new String()) {
 
 ajax.onreadystatechange = () => {
     if (ajax.readyState == ajax.DONE) {
+        console.log(ajax.response);
         showAlert(
             ajax.status == 200 ? "success" : "danger",
             JSON.parse(ajax.response).message
@@ -51,6 +52,17 @@ function tambahKategori() {
     ajax.send(JSON.stringify({ nama, faClass }));
 }
 
+function tambahBrand() {
+    const nama = document.getElementById("nama").value;
+    const deskripsi = document.getElementById("deskripsi").value;
+
+    ajax.open("POST", "/api/admin/tambah-brand", true);
+
+    closeAlert();
+    ajax.setRequestHeader("Content-Type", "application/json");
+    ajax.send(JSON.stringify({ nama, deskripsi }));
+}
+
 function editKategori() {
     const nama = document.getElementById("nama").value;
     const faClass = document.getElementById("fa-class").value;
@@ -61,6 +73,49 @@ function editKategori() {
     closeAlert();
     ajax.setRequestHeader("Content-Type", "application/json");
     ajax.send(JSON.stringify({ nama, faClass, idKategori }));
+}
+
+function tambahSubkategori() {
+    const nama = document.getElementById("nama").value;
+    const idKategori = document.getElementById("kategori").value;
+    const deskripsi = document.getElementById("deskripsi").value;
+
+    console.log(idKategori);
+
+    ajax.open("POST", "/api/admin/tambah-subkategori", true);
+
+    closeAlert();
+    ajax.setRequestHeader("Content-Type", "application/json");
+    ajax.send(JSON.stringify({ nama, idKategori, deskripsi }));
+}
+
+function tambahItem() {
+    const nama = document.getElementById("nama").value;
+    const berat = document.getElementById("berat").value;
+    const harga = document.getElementById("harga").value;
+    const URLGambar = document.getElementById("url-gambar").value;
+    const kategori = document.getElementById("kategori").value;
+    const brand = document.getElementById("brand").value;
+    const subkategori = document.getElementById("subkategori").value;
+    const stok = document.getElementById("stok").value;
+    const deskripsi = document.getElementById("deskripsi").value;
+    const obj = {
+        nama,
+        berat,
+        harga,
+        URLGambar,
+        kategori,
+        stok,
+        brand,
+        subkategori,
+        deskripsi,
+    };
+
+    ajax.open("POST", "/api/admin/tambah-produk", true);
+
+    closeAlert();
+    ajax.setRequestHeader("Content-Type", "application/json");
+    ajax.send(JSON.stringify(obj));
 }
 
 function hitungHarga(selectForm) {
@@ -74,4 +129,28 @@ function hitungHarga(selectForm) {
         style: "currency",
         currency: "IDR",
     }).format(hargaBarang);
+}
+
+function onchangeKategori() {
+    const kategoriSelect = document.getElementById("kategori");
+    const subkategoriSelect = document.getElementById("subkategori");
+    const subkategoriSelectElements = subkategoriSelect.length;
+
+    for (let i = subkategoriSelectElements; i > 0; i--)
+        subkategoriSelect.remove(i);
+
+    fetch(`/api/subkategori?id_kategori=${kategoriSelect.value}`)
+        .then((res) => res.json())
+        .then((subcategories) =>
+            subcategories.forEach((subcategory) => {
+                const option = document.createElement("option");
+                option.text = subcategory.nama;
+                option.value = subcategory.id;
+                subkategoriSelect.add(option);
+            })
+        );
+
+    // if(kategoriSelect.selecte)
+
+    // console.log(subkategoriSelect);
 }

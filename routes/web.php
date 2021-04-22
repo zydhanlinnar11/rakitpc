@@ -36,6 +36,8 @@ Route::get('/simulasi', [SimulasiController::class, 'simulasi']);
 
 Route::get('/admin', [AdminController::class, 'dashboard']);
 
+Route::get('/admin/tambah-produk', [AdminController::class, 'tambah_produk']);
+
 Route::get('/admin/daftar-produk', [AdminController::class, 'daftar_produk']);
 
 Route::get('/admin/tambah-kategori', [AdminController::class, 'tambah_kategori']);
@@ -43,6 +45,10 @@ Route::get('/admin/tambah-kategori', [AdminController::class, 'tambah_kategori']
 Route::get('/admin/daftar-kategori', [AdminController::class, 'daftar_kategori']);
 
 Route::get('/admin/edit-kategori', [AdminController::class, 'edit_kategori']);
+
+Route::get('/admin/tambah-subkategori', [AdminController::class, 'tambah_subkategori']);
+
+Route::get('/admin/tambah-brand', [AdminController::class, 'tambah_brand']);
 
 // Auth::routes();
 
