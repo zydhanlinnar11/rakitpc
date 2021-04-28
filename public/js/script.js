@@ -33,7 +33,7 @@ function showAlert(type = new String(), message = new String()) {
 
 ajax.onreadystatechange = () => {
     if (ajax.readyState == ajax.DONE) {
-        console.log(ajax.response);
+        // console.log(ajax.response);
         showAlert(
             ajax.status == 200 ? "success" : "danger",
             JSON.parse(ajax.response).message
@@ -90,15 +90,15 @@ function tambahSubkategori() {
 }
 
 function tambahItem() {
-    const nama = document.getElementById("nama").value;
-    const berat = document.getElementById("berat").value;
-    const harga = document.getElementById("harga").value;
-    const URLGambar = document.getElementById("url-gambar").value;
-    const kategori = document.getElementById("kategori").value;
-    const brand = document.getElementById("brand").value;
-    const subkategori = document.getElementById("subkategori").value;
-    const stok = document.getElementById("stok").value;
-    const deskripsi = document.getElementById("deskripsi").value;
+    const nama = document.getElementById("simulasi-nama").value;
+    const berat = document.getElementById("simulasi-berat").value;
+    const harga = document.getElementById("simulasi-harga").value;
+    const URLGambar = document.getElementById("simulasi-url-gambar").value;
+    const kategori = document.getElementById("simulasi-kategori").value;
+    const brand = document.getElementById("simulasi-brand").value;
+    const subkategori = document.getElementById("simulasi-subkategori").value;
+    const stok = document.getElementById("simulasi-stok").value;
+    const deskripsi = document.getElementById("simulasi-deskripsi").value;
     const obj = {
         nama,
         berat,
@@ -122,7 +122,7 @@ function hitungHarga(selectForm) {
     const hargaBarang =
         selectForm.options[selectForm.options.selectedIndex].dataset.harga;
     // console.log(selectForm.id);
-    console.log();
+    // console.log();
     document.getElementById(
         `${selectForm.id}-harga`
     ).value = new Intl.NumberFormat("id-ID", {
@@ -132,9 +132,17 @@ function hitungHarga(selectForm) {
 }
 
 function onchangeKategori() {
-    const kategoriSelect = document.getElementById("kategori");
-    const subkategoriSelect = document.getElementById("subkategori");
+    const kategoriSelect = document.getElementById("simulasi-kategori");
+    const subkategoriSelect = document.getElementById("simulasi-subkategori");
+    const socketSelect = document.getElementById("simulasi-socket");
     const subkategoriSelectElements = subkategoriSelect.length;
+    // console.log(socketSelect.dataset.onIfKategoriId);
+    if (kategoriSelect.value == socketSelect.dataset.onIfKategoriId)
+        socketSelect.disabled = false;
+    else {
+        socketSelect.disabled = true;
+        socketSelect.value = "";
+    }
 
     for (let i = subkategoriSelectElements; i > 0; i--)
         subkategoriSelect.remove(i);
@@ -149,8 +157,4 @@ function onchangeKategori() {
                 subkategoriSelect.add(option);
             })
         );
-
-    // if(kategoriSelect.selecte)
-
-    // console.log(subkategoriSelect);
 }

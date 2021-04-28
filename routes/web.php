@@ -25,9 +25,13 @@ Route::get('/', function() {
 
 Route::get('/item', function (Request $request) {
     $itemcontroller = new ItemController;
+    if($request->input('item_id') != '' && $request->input('kategori') != '')
+        return abort(404);
+    if($request->input('item_id') != '')
+        return $itemcontroller->show_an_item($request);
     if($request->input('kategori') != '')
         return $itemcontroller->show_items_by_category($request);
-    // else return $itemcontroller->get_all_items();
+    return $itemcontroller->get_all_items();
 });
 
 Route::get('/kategori', [KategoriController::class, 'show_all']);

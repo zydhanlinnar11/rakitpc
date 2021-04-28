@@ -146,6 +146,7 @@ Route::post('/admin/tambah-produk', function(Request $request) {
     $nama = $request->nama;
     $berat = $request->berat;
     $harga = $request->harga;
+    $stok = $request->stok;
     $URL_gambar = $request->URLGambar;
     $id_kategori = $request->kategori;
     $id_brand = $request->brand;
@@ -153,38 +154,48 @@ Route::post('/admin/tambah-produk', function(Request $request) {
     $deskripsi = $request->deskripsi;
     $tabel_item = DB::table('items');
 
+    if($nama == null)
+        return response()->json(['message' => "Nama can't be empty"], 400);
+    if($berat == null)
+        return response()->json(['message' => "Berat can't be empty"], 400);
+    if($harga == null)
+        return response()->json(['message' => "Harga can't be empty"], 400);
+    if($stok == null)
+        return response()->json(['message' => "Stok can't be empty"], 400);
+    if($URL_gambar == null)
+        return response()->json(['message' => "Gambar can't be empty"], 400);
+    if($id_kategori == null)
+        return response()->json(['message' => "Kategori can't be empty"], 400);
+    if($id_brand == null)
+        return response()->json(['message' => "Brand can't be empty"], 400);
+    if($id_subkategori == null)
+        return response()->json(['message' => "Subkategori can't be empty"], 400);
+    if($deskripsi == null)
+        return response()->json(['message' => "Deskripsi can't be empty"], 400);
+
     if($tabel_item->where('nama', '=', $nama)->get()->count() > 0)
         return response()->json(['message' => 'Product already exists.'], 400);
 
     if($deskripsi == NULL)
         $deskripsi = '-';
 
-    // return response()->json([
-    //     'nama' => $nama,
-    //     'berat' => $berat,
-    //     'harga' => $harga,
-    //     'URL_gambar' => $URL_gambar,
-    //     'id_kategori' => $id_kategori,
-    //     'id_brand' => $id_brand,
-    //     'id_subkategori' => $id_subkategori,
-    //     'deskripsi' => $deskripsi
-    // ], 200);
-        
-    $tabel_item->upsert(
-        [
-            'nama' => $nama,
-            'berat' => $berat,
-            'harga' => $harga,
-            'URL_gambar' => $URL_gambar,
-            'id_kategori' => $id_kategori,
-            'id_brand' => $id_brand,
-            'id_subkategori' => $id_subkategori,
-            'deskripsi' => $deskripsi
-        ],
-        ['nama']
-    );
+    $obj = [
+        'nama' => $nama,
+        'berat' => $berat,
+        'harga' => $harga,
+        'stok' => $stok,
+        'URL_gambar' => $URL_gambar,
+        'id_kategori' => $id_kategori,
+        'id_brand' => $id_brand,
+        'id_subkategori' => $id_subkategori,
+        'deskripsi' => $deskripsi
+    ];
 
-    return response()->json(['message' => 'Brand added.'], 200);
+    // return response()->json($obj, 200);
+        
+    $tabel_item->upsert($obj, ['nama']);
+
+    return response()->json(['message' => 'Product added.'], 200);
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

@@ -24,28 +24,28 @@
         @csrf
         <div class="input-group mb-3">
             <span class="input-group-text">Nama item:</span>
-            <input type="text" id="nama" name="nama" class="form-control" placeholder="Nama item">
+            <input type="text" id="simulasi-nama" name="nama" class="form-control" placeholder="Nama item">
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text">Berat barang:</span>
-            <input type="number" name="berat" id="berat" class="form-control" min="0" placeholder="Berat barang (kg)">
+            <input type="number" name="berat" id="simulasi-berat" class="form-control" min="0" placeholder="Berat barang (kg)">
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text">Harga barang:</span>
-            <input type="number" name="harga" id="harga" class="form-control" min="0" placeholder="Harga barang">
+            <input type="number" name="harga" id="simulasi-harga" class="form-control" min="0" placeholder="Harga barang">
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text">Stok barang:</span>
-            <input type="number" name="stok" id="stok" class="form-control" min="0" placeholder="Stok barang">
+            <input type="number" name="stok" id="simulasi-stok" class="form-control" min="0" placeholder="Stok barang">
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text">URL gambar:</span>
-            <input type="text" id="url-gambar" name="url-gambar" class="form-control" placeholder="URL gambar">
+            <input type="text" id="simulasi-url-gambar" name="url-gambar" class="form-control" placeholder="URL gambar">
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text">Kategori:</span>
-            <select onchange="onchangeKategori()" name="kategori" id="kategori" class="form-select">
-                <option value="">Pilih kategori</option>
+            <select onchange="onchangeKategori()" name="kategori" id="simulasi-kategori" class="form-select">
+                <option value="" selected>Pilih kategori</option>
                 @foreach ($list_kategori as $item)
                 <option value="{{$item->id}}">{{$item->nama}}</option>
                 @endforeach
@@ -53,8 +53,8 @@
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text">Brand:</span>
-            <select name="brand" id="brand" class="form-select">
-                <option value="">Pilih brand</option>
+            <select name="brand" id="simulasi-brand" class="form-select">
+                <option value="" selected>Pilih brand</option>
                 @foreach ($list_brand as $item)
                 <option value="{{$item->id}}">{{$item->nama}}</option>
                 @endforeach
@@ -62,19 +62,26 @@
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text">Socket:</span>
-            <select name="socket" id="socket" class="form-select">
-                <option value="">Pilih socket prosesor</option>
+            <select
+            data-on-if-kategori-id="{{ $prosesor_kategori_id }}"
+            name="socket"
+            id="simulasi-socket"
+            class="form-select" disabled>
+                <option value="" selected>Pilih socket prosesor</option>
+                @foreach ($list_socket as $item)
+                <option value="{{$item->id}}">{{$item->nama}}</option>
+                @endforeach
             </select>
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text">Subkategori:</span>
-            <select name="subkategori" id="subkategori" class="form-select">
-                <option value="">Pilih subkategori</option>
+            <select name="subkategori" id="simulasi-subkategori" class="form-select">
+                <option value="" selected>Pilih subkategori</option>
             </select>
         </div>
         <label for="deskripsi" class="mb-2">Deskripsi:</label>
-        <textarea name="deskripsi" id="deskripsi" cols="30" rows="10" class="form-control mb-3"></textarea>
-        <button type="submit" id="tambah-button" class="btn btn-primary mb-3">Tambahkan</button>
+        <textarea name="deskripsi" id="simulasi-deskripsi" cols="30" rows="10" class="form-control mb-3"></textarea>
+        <button type="submit" id="simulasi-tambah-button" class="btn btn-primary mb-3">Tambahkan</button>
     </form>
 </div>
 @endsection

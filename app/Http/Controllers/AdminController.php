@@ -62,9 +62,11 @@ class AdminController extends Controller
     public function tambah_produk() {
         $list_kategori = DB::table('kategoris')->get();
         $list_brand = DB::table('brands')->get();
+        $list_socket = DB::table('processor_sockets')->get();
         $list_subkategori = DB::table('subcategories')->get();
+        $prosesor_kategori_id = DB::table('kategoris')->select('id')->where('url', '=', 'prosesor')->get()[0]->id;
 
-        return view('admin-tambah-produk', compact('list_kategori', 'list_subkategori', 'list_brand'));
+        return view('admin-tambah-produk', compact('list_kategori', 'list_subkategori', 'list_brand', 'prosesor_kategori_id', 'list_socket'));
     }
 
     public function daftar_produk(Request $request) {
