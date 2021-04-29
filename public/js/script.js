@@ -36,7 +36,7 @@ function showAlert(type = new String(), message = new String()) {
 
 ajax.onreadystatechange = () => {
     if (ajax.readyState == ajax.DONE) {
-        // console.log(ajax.response);
+        console.log(ajax.response);
         showAlert(
             ajax.status == 200 ? "success" : "danger",
             JSON.parse(ajax.response).message
@@ -149,7 +149,7 @@ function editItem() {
         deskripsi,
     };
 
-    ajax.open("POST", "/api/admin/edit-produk", true);
+    ajax.open("PATCH", "/api/admin/edit-produk", true);
 
     closeAlert();
     ajax.setRequestHeader("Content-Type", "application/json");

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\kategori;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class KategoriController extends Controller
@@ -18,7 +19,11 @@ class KategoriController extends Controller
     }
 
     public function show_all() {
-        $list_kategori = kategori::all();
+        try {
+            $list_kategori = kategori::all();
+        } catch (QueryException $e) {
+            return view('database-error');
+        }
         return view('kategori', compact('list_kategori'));
     }
 
