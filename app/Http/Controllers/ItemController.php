@@ -37,8 +37,13 @@ class ItemController extends Controller
         $nama_subkategori = DB::table('subcategories')->select(['nama'])->where('id', '=', $item->id_subkategori)->get()[0]->nama;
         $nama_brand = DB::table('brands')->select(['nama'])->where('id', '=', $item->id_brand)->get()[0]->nama;
         $deskripsi = explode("\n", $item->deskripsi);
+        $is_this_processor_or_motherboard = ($nama_kategori == 'Prosesor' || $nama_kategori == 'Motherboard'); 
+        $nama_socket = DB::table('processor_sockets')->select(['nama'])->where('id', '=', $item->id_socket)->get();
+        if($nama_socket->count() != 1) $nama_socket = '-';
+        else $nama_socket = $nama_socket[0]->nama;
 
         // return print_r($item);
-        return view('item', compact('item', 'nama_kategori', 'nama_subkategori', 'nama_brand', 'deskripsi'));
+        return view('item', compact('item', 'nama_kategori', 'nama_subkategori', 'nama_brand', 'deskripsi',
+                'is_this_processor_or_motherboard', 'nama_socket'));
     }
 }

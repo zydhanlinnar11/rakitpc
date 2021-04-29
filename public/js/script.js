@@ -4,6 +4,9 @@ function setNavButtonClickability() {
 
     document.getElementById("nav-button-admin").onclick = () =>
         window.open("/admin", "_self");
+
+    document.getElementById("nav-button-home").onclick = () =>
+        window.open("/", "_self");
 }
 
 setNavButtonClickability();
@@ -90,21 +93,23 @@ function tambahSubkategori() {
 }
 
 function tambahItem() {
-    const nama = document.getElementById("simulasi-nama").value;
-    const berat = document.getElementById("simulasi-berat").value;
-    const harga = document.getElementById("simulasi-harga").value;
-    const URLGambar = document.getElementById("simulasi-url-gambar").value;
-    const kategori = document.getElementById("simulasi-kategori").value;
-    const brand = document.getElementById("simulasi-brand").value;
-    const subkategori = document.getElementById("simulasi-subkategori").value;
-    const stok = document.getElementById("simulasi-stok").value;
-    const deskripsi = document.getElementById("simulasi-deskripsi").value;
+    const nama = document.getElementById("nama").value;
+    const berat = document.getElementById("berat").value;
+    const harga = document.getElementById("harga").value;
+    const URLGambar = document.getElementById("url-gambar").value;
+    const kategori = document.getElementById("kategori").value;
+    const brand = document.getElementById("brand").value;
+    const subkategori = document.getElementById("subkategori").value;
+    const stok = document.getElementById("stok").value;
+    const deskripsi = document.getElementById("deskripsi").value;
+    const socket = document.getElementById("socket").value;
     const obj = {
         nama,
         berat,
         harga,
         URLGambar,
         kategori,
+        socket,
         stok,
         brand,
         subkategori,
@@ -112,6 +117,39 @@ function tambahItem() {
     };
 
     ajax.open("POST", "/api/admin/tambah-produk", true);
+
+    closeAlert();
+    ajax.setRequestHeader("Content-Type", "application/json");
+    ajax.send(JSON.stringify(obj));
+}
+
+function editItem() {
+    const id = document.getElementById("id").value;
+    const nama = document.getElementById("nama").value;
+    const berat = document.getElementById("berat").value;
+    const harga = document.getElementById("harga").value;
+    const URLGambar = document.getElementById("url-gambar").value;
+    const kategori = document.getElementById("kategori").value;
+    const brand = document.getElementById("brand").value;
+    const subkategori = document.getElementById("subkategori").value;
+    const stok = document.getElementById("stok").value;
+    const deskripsi = document.getElementById("deskripsi").value;
+    const socket = document.getElementById("socket").value;
+    const obj = {
+        id,
+        nama,
+        berat,
+        harga,
+        URLGambar,
+        kategori,
+        socket,
+        stok,
+        brand,
+        subkategori,
+        deskripsi,
+    };
+
+    ajax.open("POST", "/api/admin/edit-produk", true);
 
     closeAlert();
     ajax.setRequestHeader("Content-Type", "application/json");
@@ -132,12 +170,15 @@ function hitungHarga(selectForm) {
 }
 
 function onchangeKategori() {
-    const kategoriSelect = document.getElementById("simulasi-kategori");
-    const subkategoriSelect = document.getElementById("simulasi-subkategori");
-    const socketSelect = document.getElementById("simulasi-socket");
+    const kategoriSelect = document.getElementById("kategori");
+    const subkategoriSelect = document.getElementById("subkategori");
+    const socketSelect = document.getElementById("socket");
     const subkategoriSelectElements = subkategoriSelect.length;
     // console.log(socketSelect.dataset.onIfKategoriId);
-    if (kategoriSelect.value == socketSelect.dataset.onIfKategoriId)
+    if (
+        kategoriSelect.value == socketSelect.dataset.motherboardCategoryId ||
+        kategoriSelect.value == socketSelect.dataset.processorCategoryId
+    )
         socketSelect.disabled = false;
     else {
         socketSelect.disabled = true;

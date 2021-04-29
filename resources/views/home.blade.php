@@ -5,7 +5,6 @@
     <h1 class="card-container-title">Kategori</h1>
     <hr>
     <div class="row">
-
         @foreach ($list_kategori as $key)
             <div class="col-xxl-1 col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-3">
                 <div class="card text-center col-12" style="margin-bottom: 16px">

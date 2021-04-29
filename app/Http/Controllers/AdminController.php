@@ -65,20 +65,41 @@ class AdminController extends Controller
         $list_socket = DB::table('processor_sockets')->get();
         $list_subkategori = DB::table('subcategories')->get();
         $prosesor_kategori_id = DB::table('kategoris')->select('id')->where('url', '=', 'prosesor')->get()[0]->id;
+        $motherboard_kategori_id = DB::table('kategoris')->select('id')->where('url', '=', 'motherboard')->get()[0]->id;
 
-        return view('admin-tambah-produk', compact('list_kategori', 'list_subkategori', 'list_brand', 'prosesor_kategori_id', 'list_socket'));
+        return view('admin-tambah-produk', compact('list_kategori', 'list_subkategori', 'list_brand',
+            'prosesor_kategori_id', 'list_socket', 'motherboard_kategori_id'));
+    }
+
+    public function edit_produk(Request $request) {
+        $list_kategori = DB::table('kategoris')->get();
+        $list_brand = DB::table('brands')->get();
+        $list_socket = DB::table('processor_sockets')->get();
+        $list_subkategori = DB::table('subcategories')->get();
+        $prosesor_kategori_id = DB::table('kategoris')->select('id')->where('url', '=', 'prosesor')->get()[0]->id;
+        $motherboard_kategori_id = DB::table('kategoris')->select('id')->where('url', '=', 'motherboard')->get()[0]->id;
+        $produk = DB::table('items')->where('id', '=', $request->query('id'))->get();
+        
+        if($produk->count() == 0) return abort(404);
+        $produk = $produk[0];
+        $is_this_processor_or_motherboard = $produk->id_kategori == $motherboard_kategori_id || $produk->id_kategori == $prosesor_kategori_id;
+
+        return view('admin-edit-produk', compact('list_kategori', 'list_subkategori',
+            'list_brand', 'prosesor_kategori_id', 'list_socket', 'produk', 'motherboard_kategori_id'
+            , 'is_this_processor_or_motherboard'));
     }
 
     public function daftar_produk(Request $request) {
         $list_produk = DB::table('items');
         $list_kategori = kategori::all()->sortBy("id");
         $selected_kategori = $request->input('filter-kategori');
-
+        
         if($selected_kategori != '')
             $list_produk->where('id_kategori', '=', $selected_kategori)->get();
-
+        
+        $item_count = $list_produk->count();
         $list_produk = $list_produk->get();
-        return view('admin-daftar-item', compact('list_produk', 'list_kategori', 'selected_kategori'));
+        return view('admin-daftar-item', compact('list_produk', 'list_kategori', 'selected_kategori', 'item_count'));
     }
 
     public function tambah_kategori() {

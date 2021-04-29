@@ -1,9 +1,7 @@
 @extends('layouts.app')
 
 @section('main-content')
-<div class="card-container">
-    <h1 class="card-container-title">Dashboard</h1>
-    <hr>
+<x-_content_container :pageTitle="'Dashboard'">
     <div class="row">
         @foreach ($dashboard as $item)
         <div class="col-xxl-1 col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-3">
@@ -18,5 +16,5 @@
         </div>
         @endforeach      
     </div>
-</div>
+</x-_content_container>
 @endsection

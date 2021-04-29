@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\SimulasiController;
@@ -25,11 +24,13 @@ Route::get('/', function() {
 
 Route::get('/item', function (Request $request) {
     $itemcontroller = new ItemController;
-    if($request->input('item_id') != '' && $request->input('kategori') != '')
-        return abort(404);
     if($request->input('item_id') != '')
         return $itemcontroller->show_an_item($request);
-    if($request->input('kategori') != '')
+    return abort(404);
+});
+
+Route::get('/items', function (Request $request) {
+    $itemcontroller = new ItemController;
         return $itemcontroller->show_items_by_category($request);
     return $itemcontroller->get_all_items();
 });
@@ -41,6 +42,8 @@ Route::get('/simulasi', [SimulasiController::class, 'simulasi']);
 Route::get('/admin', [AdminController::class, 'dashboard']);
 
 Route::get('/admin/tambah-produk', [AdminController::class, 'tambah_produk']);
+
+Route::get('/admin/edit-produk', [AdminController::class, 'edit_produk']);
 
 Route::get('/admin/daftar-produk', [AdminController::class, 'daftar_produk']);
 

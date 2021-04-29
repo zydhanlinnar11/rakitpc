@@ -151,6 +151,7 @@ Route::post('/admin/tambah-produk', function(Request $request) {
     $id_kategori = $request->kategori;
     $id_brand = $request->brand;
     $id_subkategori = $request->subkategori;
+    $id_socket = $request->socket;
     $deskripsi = $request->deskripsi;
     $tabel_item = DB::table('items');
 
@@ -170,8 +171,9 @@ Route::post('/admin/tambah-produk', function(Request $request) {
         return response()->json(['message' => "Brand can't be empty"], 400);
     if($id_subkategori == null)
         return response()->json(['message' => "Subkategori can't be empty"], 400);
-    if($deskripsi == null)
-        return response()->json(['message' => "Deskripsi can't be empty"], 400);
+    $url_kategori = DB::table('kategoris')->where('id', '=', $id_kategori)->get()[0]->url;
+    if($id_socket == null && ($url_kategori == 'prosesor' || $url_kategori == 'motherboard'))
+        return response()->json(['message' => "Socket can't be empty if this is a processor or motherboard"], 400);
 
     if($tabel_item->where('nama', '=', $nama)->get()->count() > 0)
         return response()->json(['message' => 'Product already exists.'], 400);
@@ -188,6 +190,7 @@ Route::post('/admin/tambah-produk', function(Request $request) {
         'id_kategori' => $id_kategori,
         'id_brand' => $id_brand,
         'id_subkategori' => $id_subkategori,
+        'id_socket' => $id_socket,
         'deskripsi' => $deskripsi
     ];
 
@@ -196,6 +199,70 @@ Route::post('/admin/tambah-produk', function(Request $request) {
     $tabel_item->upsert($obj, ['nama']);
 
     return response()->json(['message' => 'Product added.'], 200);
+});
+
+Route::post('/admin/edit-produk', function(Request $request) {
+    $id = $request->id;
+    $nama = $request->nama;
+    $berat = $request->berat;
+    $harga = $request->harga;
+    $stok = $request->stok;
+    $URL_gambar = $request->URLGambar;
+    $id_kategori = $request->kategori;
+    $id_brand = $request->brand;
+    $id_subkategori = $request->subkategori;
+    $id_socket = $request->socket;
+    $deskripsi = $request->deskripsi;
+    $tabel_item = DB::table('items');
+
+    if($id == null)
+        return response()->json(['message' => "ID can't be empty"], 400);
+    if($nama == null)
+        return response()->json(['message' => "Nama can't be empty"], 400);
+    if($berat == null)
+        return response()->json(['message' => "Berat can't be empty"], 400);
+    if($harga == null)
+        return response()->json(['message' => "Harga can't be empty"], 400);
+    if($stok == null)
+        return response()->json(['message' => "Stok can't be empty"], 400);
+    if($URL_gambar == null)
+        return response()->json(['message' => "Gambar can't be empty"], 400);
+    if($id_kategori == null)
+        return response()->json(['message' => "Kategori can't be empty"], 400);
+    if($id_brand == null)
+        return response()->json(['message' => "Brand can't be empty"], 400);
+    if($id_subkategori == null)
+        return response()->json(['message' => "Subkategori can't be empty"], 400);
+    $url_kategori = DB::table('kategoris')->where('id', '=', $id_kategori)->get()[0]->url;
+    if($id_socket == null && ($url_kategori == 'prosesor' || $url_kategori == 'motherboard'))
+
+    if($deskripsi == NULL)
+        $deskripsi = '-';
+
+    $obj = [
+        'id' => $id,
+        'nama' => $nama,
+        'berat' => $berat,
+        'harga' => $harga,
+        'stok' => $stok,
+        'URL_gambar' => $URL_gambar,
+        'id_kategori' => $id_kategori,
+        'id_brand' => $id_brand,
+        'id_subkategori' => $id_subkategori,
+        'id_socket' => $id_socket,
+        'deskripsi' => $deskripsi
+    ];
+
+    $item = $tabel_item->select(['id'])->where('id', '=', $id)->get()->count();
+    if($item == 0)
+        return response()->json(['message' => "Couldn\'t find product with id = ".strval($id)], 400);
+    
+    $tabel_item->upsert($obj, ['id'], [
+        'nama', 'berat', 'harga', 'stok', 'URL_gambar', 'id_kategori',
+        'id_brand', 'id_subkategori', 'id_socket', 'deskripsi'
+    ]);
+
+    return response()->json(['message' => 'Product changed.'], 200);
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

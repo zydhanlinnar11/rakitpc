@@ -1,12 +1,7 @@
 @extends('layouts.app')
 
 @section('main-content')
-<div class="card-container">
-    <h1 class="card-container-title">
-        <a href="./" class="fas fa-arrow-left" style="text-decoration: none; color: #212529"></a>
-        Daftar produk:
-    </h1>
-    <hr>
+<x-_content_container :pageTitle="'Daftar produk'">
     <form style="display: flex">
         <div class="col-md-4">
             <div class="input-group mb-3">
@@ -24,19 +19,19 @@
         <button class="btn btn-outline-primary mb-3 ms-2">Filter</button>
     </form>
 
+    @if ($item_count > 0)
     <div class="row">
         @foreach ($list_produk as $key)
-        <div class="col-xxl-1 col-xl-2 col-lg-3 col-md-4 col-sm-6">
-            <div class="card text-center col-12" style="margin-bottom: 16px">
-                <img src="https://storage.googleapis.com/zydhan-web.appspot.com/gambar-biner.webp" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">{{$key->nama}}</h5>
-                        <h6 class="card-text">{{$key->deskripsi}}</h6>
-                        <a href="/admin/edit-produk?id={{$key->id}}" class="btn btn-primary">Edit produk</a>
-                    </div>
-                </div>
-        </div>
+        <x-_list_item_card :key="$key">
+            <x-slot name="button1">
+                <a href="/admin/edit-produk?id={{$key->id}}" class="btn btn-primary">Edit produk</a>
+                <a href="/item?item_id={{$key->id}}" class="btn btn-secondary mt-2">Lihat produk</a>
+            </x-slot>
+        </x-_list_item_card>
         @endforeach
     </div>
-</div>
+    @else
+    <x-tidak_ada_apapun />
+    @endif
+</x-_content_container>
 @endsection

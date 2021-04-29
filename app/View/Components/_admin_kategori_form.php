@@ -4,16 +4,18 @@ namespace App\View\Components;
 
 use Illuminate\View\Component;
 
-class card-container-title extends Component
+class _admin_kategori_form extends Component
 {
+    public $kategori;
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($kategori)
     {
         //
+        $this->kategori = $kategori;
     }
 
     /**
@@ -23,6 +25,6 @@ class card-container-title extends Component
      */
     public function render()
     {
-        return view('components.card-container-title');
+        return view('components._admin_kategori_form');
     }
 }
