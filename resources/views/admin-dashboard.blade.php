@@ -4,7 +4,7 @@
 <x-_content_container :pageTitle="'Dashboard'">
     <div class="row">
         @foreach ($dashboard as $item)
-        <div class="col-xxl-1 col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-3">
+        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-3">
             <div class="card col-12">
                 <div class="card-body">
                   <h5 class="card-title">{{ $item["title"] }}</h5>

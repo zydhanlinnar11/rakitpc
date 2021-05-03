@@ -23,7 +23,7 @@
     @endif
     <div class="row mt-3">
         @foreach ($list_socket as $key)
-        <div class="col-xxl-1 col-xl-2 col-lg-3 col-md-4 col-sm-6">
+        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
             <div class="card text-center col-12" style="margin-bottom: 16px">
                 <div class="card-body">
                     <h5 class="card-title">{{$key->nama}}</h5>
