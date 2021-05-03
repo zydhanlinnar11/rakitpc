@@ -12,16 +12,14 @@ class SimulasiController extends Controller
 
     public function simulasi() {
         try {
-            $list_kategori = DB::table('kategoris')->select('id', 'nama', 'url')->get();
-            $list_barang = [];
-    
-            foreach ($list_kategori as $kategori) {
-                $list_barang[$kategori->id] = DB::table('items')->where('id_kategori', '=', $kategori->id)->get();
-            }
+            $brand_processor = DB::table('brands')->select('id', 'nama')->where('nama', '=', 'AMD')->orWhere('nama', '=', 'Intel')->get();
+            $list_ram = DB::table('items')->select(['id', 'nama', 'harga'])->where('id_kategori', '=', 14)->get();
+            $kategori_lain = DB::table('kategoris')->select(['id', 'nama', 'url'])->whereNotIn('url', ['prosesor', 'motherboard', 'memory-ram'])->get();
+            $list_item = DB::table('items')->select(['id', 'nama', 'harga', 'id_kategori'])->get();
         } catch (QueryException $e) {
             return view('database-error');
         }
 
-        return view('simulasi', compact('list_kategori', 'list_barang'));
+        return view('simulasi', compact('brand_processor', 'list_ram', 'kategori_lain', 'list_item'));
     }
 }

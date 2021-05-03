@@ -523,6 +523,48 @@ Route::delete('/admin/edit-produk', function(Request $request) {
     return response()->json(["message" => "Item deleted."], 200);
 });
 
+Route::get('/socket', function(Request $request) {
+    $id_brand = $request->id_brand;
+    try {
+        $list_socket = DB::table('processor_sockets')->select(['id', 'nama']);
+        if($id_brand != null)
+            $list_socket = $list_socket->where('id_brand', '=', $id_brand);
+        $list_socket = $list_socket->get();
+    } catch (QueryException $e) {
+        return response()->json(["message" => "Couldn't connect to database."], 500);
+    }
+    
+    return $list_socket;
+});
+
+Route::get('/prosesor', function(Request $request) {
+    $id_socket = $request->id_socket;
+    try {
+        $list_prosesor = DB::table('items')->select(['id', 'nama', 'harga', 'stok'])->where('id_kategori', '=', 12);
+        if($id_socket != null)
+            $list_prosesor = $list_prosesor->where('id_socket', '=', $id_socket);
+        $list_prosesor = $list_prosesor->get();
+    } catch (QueryException $e) {
+        return response()->json(["message" => "Couldn't connect to database."], 500);
+    }
+    
+    return $list_prosesor;
+});
+
+Route::get('/motherboard', function(Request $request) {
+    $id_socket = $request->id_socket;
+    try {
+        $list_motherboard = DB::table('items')->select(['id', 'nama', 'harga', 'stok'])->where('id_kategori', '=', 13);
+        if($id_socket != null)
+            $list_motherboard = $list_motherboard->where('id_socket', '=', $id_socket);
+        $list_motherboard = $list_motherboard->get();
+    } catch (QueryException $e) {
+        return response()->json(["message" => "Couldn't connect to database."], 500);
+    }
+    
+    return $list_motherboard;
+});
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

@@ -247,7 +247,7 @@ class AdminController extends Controller
 
     public function tambah_socket() {
         try {
-            $list_brand = DB::table('brands')->whereBetween('nama', ['AMD', 'Intel'], 'or')->get();
+            $list_brand = DB::table('brands')->where('nama', '=', 'AMD')->orWhere('nama', '=', 'Intel')->get();
         } catch (QueryException $e) {
             return view('database-error');
         }
@@ -262,7 +262,7 @@ class AdminController extends Controller
             if($selected_brand != '') 
                 $list_socket = $list_socket->where('id_brand', '=', $selected_brand);
             $list_socket = $list_socket->get();
-            $list_brand = DB::table('brands')->whereBetween('nama', ['AMD', 'Intel'], 'or')->get();
+            $list_brand = DB::table('brands')->where('nama', '=', 'AMD')->orWhere('nama', '=', 'Intel')->get();
         } catch (QueryException $e) {
             return view('database-error');
         }
@@ -274,7 +274,7 @@ class AdminController extends Controller
         try {
             $tabel_socket = DB::table('processor_sockets');
             $socket = $tabel_socket->where('id', '=', $socket_id)->get();
-            $list_brand = DB::table('brands')->whereBetween('nama', ['AMD', 'Intel'], 'or')->get();
+            $list_brand = DB::table('brands')->where('nama', '=', 'AMD')->orWhere('nama', '=', 'Intel')->get();
             if($socket->count() != 1)
                 return abort(404);
     
