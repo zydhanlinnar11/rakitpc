@@ -55,7 +55,21 @@ Route::get('/admin/edit-kategori', [AdminController::class, 'edit_kategori']);
 
 Route::get('/admin/tambah-subkategori', [AdminController::class, 'tambah_subkategori']);
 
+Route::get('/admin/daftar-subkategori', [AdminController::class, 'daftar_subkategori']);
+
+Route::get('/admin/edit-subkategori', [AdminController::class, 'edit_subkategori']);
+
+Route::get('/admin/daftar-brand', [AdminController::class, 'daftar_brand']);
+
+Route::get('/admin/edit-brand', [AdminController::class, 'edit_brand']);
+
 Route::get('/admin/tambah-brand', [AdminController::class, 'tambah_brand']);
+
+Route::get('/admin/tambah-socket', [AdminController::class, 'tambah_socket']);
+
+Route::get('/admin/edit-socket', [AdminController::class, 'edit_socket']);
+
+Route::get('/admin/daftar-socket', [AdminController::class, 'daftar_socket']);
 
 // Auth::routes();
 

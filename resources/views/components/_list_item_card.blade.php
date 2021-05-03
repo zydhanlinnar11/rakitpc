@@ -2,7 +2,7 @@
     <div class="card text-center col-12" style="margin-bottom: 16px">
         <div class="text-center card-img-top mt-1">
             <img src="{{$key->url_gambar}}"
-            alt="Gambar dari {{$key->nama}}" style="max-height: 120px">
+            alt="Gambar dari {{$key->nama}}" style="max-height: 120px; max-width: 100%">
         </div>
             <div class="card-body">
                 <h5 class="card-title">{{$key->nama}}</h5>

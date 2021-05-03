@@ -111,6 +111,29 @@ Route::patch('/admin/edit-kategori', function(Request $request) {
     
 });
 
+Route::delete('/admin/edit-kategori', function(Request $request) {
+    $id = $request->id;
+    try {
+        $kategori = DB::table('kategoris')->where('id', '=', $id);
+        if($kategori->count() == 0)
+            return response()->json(["message" => "Kategori id ".strval($id)." tidak ditemukan"], 400);
+        if($kategori->count() > 1)
+            return response()->json(["message" => "Kategori id ".strval($id)." terdapat duplikat"], 400);
+        $produk_count = DB::table('items')->where('id_kategori', '=', $kategori->get()[0]->id)->get()->count();
+        if($produk_count != 0)
+            return response()->json(["message" => "Masih ada produk di kategori ini."], 400);
+        $subkategori_count = DB::table('subcategories')->where('id_kategori', '=', $kategori->get()[0]->id)->get()->count();
+        if($subkategori_count != 0)
+            return response()->json(["message" => "Masih ada subkategori di kategori ini."], 400);
+        
+        $kategori->delete();
+    } catch (QueryException $e) {
+        if($e->getCode() == 2002) return response()->json(["message" => "Couldn't connect to database."], 500);
+        return response()->json(["message" => $e->getMessage()], 500); 
+    }
+    return response()->json(["message" => "Kategori deleted."], 200);
+});
+
 Route::post('/admin/tambah-subkategori', function(Request $request) {
     try {
         $nama = $request->nama;
@@ -120,6 +143,10 @@ Route::post('/admin/tambah-subkategori', function(Request $request) {
         $tabel_subkategori = DB::table('subcategories');
         if($tabel_subkategori->where('slug', '=', $slug)->get()->count() > 0)
             return response()->json(['message' => 'Subcategory already exists.'], 400);
+        if($nama == NULL)
+            return response()->json(['message' => 'Nama tidak boleh null.'], 400);
+        if($id_kategori == NULL)
+            return response()->json(['message' => 'ID kategori tidak boleh null.'], 400);
         if($deskripsi == NULL)
             $deskripsi = '-';
             
@@ -138,9 +165,131 @@ Route::post('/admin/tambah-subkategori', function(Request $request) {
     }
 });
 
+Route::patch('/admin/edit-subkategori', function(Request $request) {
+    try {
+        $nama = $request->nama;
+        $slug = Str::slug($nama);
+        $deskripsi = $request->deskripsi;
+        $id = $request->id;
+        $id_kategori = $request->idKategori;
+        $tabel_subkategori = DB::table('subcategories');
+        if($id == NULL || $tabel_subkategori->where('id', '=', $id)->get()->count() == 0)
+            return response()->json(['message' => 'ID tidak valid.'], 400);
+        if($nama == NULL)
+            return response()->json(['message' => 'Nama tidak boleh null.'], 400);
+        if($id_kategori == NULL)
+            return response()->json(['message' => 'ID kategori tidak boleh null.'], 400);
+        if($deskripsi == NULL)
+            $deskripsi = '-';
+            
+        $tabel_subkategori->upsert(
+            [
+                'id' => $id,
+                'nama' => $nama,
+                'slug' => $slug,
+                'deskripsi' => $deskripsi,
+                'id_kategori' => $id_kategori
+            ],
+            ['id']
+        );
+        return response()->json(['message' => 'Subcategory edited.'], 200);
+    } catch (QueryException $e) {
+        return response()->json(["message" => "Couldn't connect to database."], 500);
+    }
+});
+
+Route::delete('/admin/edit-subkategori', function(Request $request) {
+    $id = $request->id;
+    try {
+        $subkategori = DB::table('subcategories')->where('id', '=', $id);
+        if($subkategori->count() == 0)
+            return response()->json(["message" => "Subkategori id ".strval($id)." tidak ditemukan"], 400);
+        if($subkategori->count() > 1)
+            return response()->json(["message" => "Subkategori id ".strval($id)." terdapat duplikat"], 400);
+        $produk_count = DB::table('items')->where('id_subkategori', '=', $subkategori->get()[0]->id)->get()->count();
+        if($produk_count != 0)
+            return response()->json(["message" => "Masih ada produk di subkategori ini."], 400);
+        
+        $subkategori->delete();
+    } catch (QueryException $e) {
+        if($e->getCode() == 2002) return response()->json(["message" => "Couldn't connect to database."], 500);
+        return response()->json(["message" => $e->getMessage()], 500); 
+    }
+    return response()->json(["message" => "Subkategori deleted."], 200);
+});
+
+Route::post('/admin/tambah-socket', function(Request $request) {
+    try {
+        $nama = $request->nama;
+        $id_brand = $request->idBrand;
+        $tabel_socket = DB::table('processor_sockets');
+        if($tabel_socket->where('nama', '=', $nama)->get()->count() > 0)
+            return response()->json(['message' => 'Socket already exists.'], 400);
+    
+        if($nama == NULL)
+            return response()->json(['message' => 'Nama tidak boleh null.'], 400);
+        if($id_brand == NULL)
+            return response()->json(['message' => 'ID Brand tidak boleh null.'], 400);
+            
+        $tabel_socket->upsert(
+            [
+                'nama' => $nama,
+                'id_brand' => $id_brand
+            ],
+            ['nama']
+        );
+        return response()->json(['message' => 'Socket added.'], 200);
+    } catch (QueryException $e) {
+        return response()->json(["message" => "Couldn't connect to database."], 500);
+    }
+});
+
+Route::patch('/admin/edit-socket', function(Request $request) {
+    try {
+        $id = $request->id;
+        $nama = $request->nama;
+        $id_brand = $request->idBrand;
+        $tabel_socket = DB::table('processor_sockets');
+        if($id == null || $tabel_socket->where('id', '=', $id)->get()->count() == 0)
+            return response()->json(['message' => 'ID Socket tidak valid.'], 400);
+    
+        if($nama == NULL)
+            return response()->json(['message' => 'Nama tidak boleh null.'], 400);
+        if($id_brand == NULL)
+            return response()->json(['message' => 'ID Brand tidak boleh null.'], 400);
+            
+        $tabel_socket->upsert(
+            [
+                'id' => $id,
+                'nama' => $nama,
+                'id_brand' => $id_brand
+            ],
+            ['id']
+        );
+        return response()->json(['message' => 'Socket edited.'], 200);
+    } catch (QueryException $e) {
+        return response()->json(["message" => "Couldn't connect to database."], 500);
+    }
+});
+
+Route::delete('/admin/edit-socket', function(Request $request) {
+    try {
+        $id = $request->id;
+        $tabel_socket = DB::table('processor_sockets');
+        if($id == null || $tabel_socket->where('id', '=', $id)->get()->count() == 0)
+            return response()->json(['message' => 'ID Socket tidak valid.'], 400);
+            
+        $tabel_socket->where('id', '=', $id)->delete();
+        return response()->json(['message' => 'Socket deleted.'], 200);
+    } catch (QueryException $e) {
+        return response()->json(["message" => "Couldn't connect to database."], 500);
+    }
+});
+
 Route::post('/admin/tambah-brand', function(Request $request) {
     try {
         $nama = $request->nama;
+        $url_logo = $request->urlLogo;
         $deskripsi = $request->deskripsi;
         $tabel_brand = DB::table('brands');
         if($tabel_brand->where('nama', '=', $nama)->get()->count() > 0)
@@ -152,7 +301,8 @@ Route::post('/admin/tambah-brand', function(Request $request) {
         $tabel_brand->upsert(
             [
                 'nama' => $nama,
-                'deskripsi' => $deskripsi
+                'deskripsi' => $deskripsi,
+                'url_logo' => $url_logo
             ],
             ['nama']
         );
@@ -160,6 +310,54 @@ Route::post('/admin/tambah-brand', function(Request $request) {
     } catch (QueryException $e) {
         return response()->json(["message" => "Couldn't connect to database."], 500);
     }
+});
+
+Route::patch('/admin/edit-brand', function(Request $request) {
+    try {
+        $id = $request->id;
+        $nama = $request->nama;
+        $url_logo = $request->urlLogo;
+        $deskripsi = $request->deskripsi;
+        $tabel_brand = DB::table('brands');
+        if($id == null || $tabel_brand->where('id', '=', $id)->get()->count() == 0)
+            return response()->json(['message' => 'Brand tidak valid.'], 400);
+    
+        if($deskripsi == NULL)
+            $deskripsi = '-';
+            
+        $tabel_brand->upsert(
+            [
+                'id' => $id,
+                'nama' => $nama,
+                'deskripsi' => $deskripsi,
+                'url_logo' => $url_logo
+            ],
+            ['id']
+        );
+        return response()->json(['message' => 'Brand edited.'], 200);
+    } catch (QueryException $e) {
+        return response()->json(["message" => "Couldn't connect to database."], 500);
+    }
+});
+
+Route::delete('/admin/edit-brand', function(Request $request) {
+    $id = $request->id;
+    try {
+        $brand = DB::table('brands')->where('id', '=', $id);
+        if($brand->count() == 0)
+            return response()->json(["message" => "Brand id ".strval($id)." tidak ditemukan"], 400);
+        if($brand->count() > 1)
+            return response()->json(["message" => "Brand id ".strval($id)." terdapat duplikat"], 400);
+        $produk_count = DB::table('items')->where('id_brand', '=', $brand->get()[0]->id)->get()->count();
+        if($produk_count != 0)
+            return response()->json(["message" => "Masih ada produk di brand ini."], 400);
+        
+        $brand->delete();
+    } catch (QueryException $e) {
+        if($e->getCode() == 2002) return response()->json(["message" => "Couldn't connect to database."], 500);
+        return response()->json(["message" => $e->getMessage()], 500); 
+    }
+    return response()->json(["message" => "Brand deleted."], 200);
 });
 
 Route::post('/admin/tambah-produk', function(Request $request) {
@@ -308,6 +506,21 @@ Route::patch('/admin/edit-produk', function(Request $request) {
     }
 
     return response()->json(['message' => 'Product changed.'], 200);
+});
+
+Route::delete('/admin/edit-produk', function(Request $request) {
+    $id = $request->id;
+    try {
+        $produk = DB::table('items')->where('id', '=', $id);
+        if($produk->count() == 0)
+            return response()->json(["message" => "Produk id ".strval($id)." tidak ditemukan"], 400);
+        if($produk->count() > 1)
+            return response()->json(["message" => "Produk id ".strval($id)." terdapat duplikat"], 400);
+        $produk->delete();
+    } catch (QueryException $e) {
+        return response()->json(["message" => "Couldn't connect to database."], 500);
+    }
+    return response()->json(["message" => "Item deleted."], 200);
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

@@ -20,9 +20,16 @@
     </select>
 </div>
 <label for="deskripsi" class="mb-2">Deskripsi:</label>
-<textarea name="deskripsi" id="deskripsi" cols="30" rows="10" class="form-control mb-3">
-@isset($subkategori)
-value="{{$subkategori->deskripsi}}"
-@endisset
+<textarea name="deskripsi" id="deskripsi" cols="30" rows="10" class="form-control mb-3">@isset($subkategori){{$subkategori->deskripsi}}@endisset
 </textarea>
-<button type="submit" id="tambah-button" class="btn btn-primary mb-3">Tambahkan</button>
+<div class="row mb-3">
+    <div class="col-4">
+        <a href="./" class="btn btn-secondary col-12">Back</a>
+    </div>
+    <div class="col-4">
+        {{$middle_button}}
+    </div>
+    <div class="col-4">
+        {{$right_button}}
+    </div>
+</div>

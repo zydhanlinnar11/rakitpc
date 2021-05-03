@@ -36,7 +36,7 @@ function showAlert(type = new String(), message = new String()) {
 
 ajax.onreadystatechange = () => {
     if (ajax.readyState == ajax.DONE) {
-        console.log(ajax.response);
+        // console.log(ajax.response);
         showAlert(
             ajax.status == 200 ? "success" : "danger",
             JSON.parse(ajax.response).message
@@ -58,12 +58,13 @@ function tambahKategori() {
 function tambahBrand() {
     const nama = document.getElementById("nama").value;
     const deskripsi = document.getElementById("deskripsi").value;
+    const urlLogo = document.getElementById("url_logo").value;
 
     ajax.open("POST", "/api/admin/tambah-brand", true);
 
     closeAlert();
     ajax.setRequestHeader("Content-Type", "application/json");
-    ajax.send(JSON.stringify({ nama, deskripsi }));
+    ajax.send(JSON.stringify({ nama, deskripsi, urlLogo }));
 }
 
 function editKategori() {
@@ -90,6 +91,17 @@ function tambahSubkategori() {
     closeAlert();
     ajax.setRequestHeader("Content-Type", "application/json");
     ajax.send(JSON.stringify({ nama, idKategori, deskripsi }));
+}
+
+function tambahSocket() {
+    const nama = document.getElementById("nama").value;
+    const idBrand = document.getElementById("brand").value;
+
+    ajax.open("POST", "/api/admin/tambah-socket", true);
+
+    closeAlert();
+    ajax.setRequestHeader("Content-Type", "application/json");
+    ajax.send(JSON.stringify({ nama, idBrand }));
 }
 
 function tambahItem() {

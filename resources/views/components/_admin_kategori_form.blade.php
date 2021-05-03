@@ -19,4 +19,14 @@
 value="{{$kategori->id}}"
 @endisset
 type="text" name="id_kategori" id="id_kategori" style="width: 0; height: 0; visibility: hidden; position: absolute">
-<button type="submit" id="tambah-button" class="btn btn-primary mb-3">Ubah</button>
+<div class="row">
+    <div class="col-4">
+        <button onclick="history.back()" type="button" id="back-button" class="btn btn-secondary col-12 mb-3">Kembali</button>
+    </div>
+    <div class="col-4">
+        {{$button_mid}}
+    </div>
+    <div class="col-4">
+        {{$button_right}}
+    </div>
+</div>

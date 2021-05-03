@@ -5,7 +5,14 @@
     <x-_admin_form_alert />
     <form action="javascript:tambahBrand()" method="POST">
         @csrf
-        <x-_admin_brand_form :brand='null' />
+        <x-_admin_brand_form :brand='null'>
+            <x-slot name="middle_button">
+                <button type="reset" id="reset-button" class="btn btn-warning mb-3 col-12">Reset</button>
+            </x-slot>
+            <x-slot name="right_button">
+                <button type="submit" id="tambah-button" class="btn btn-primary mb-3 col-12">Tambahkan</button>
+            </x-slot>
+        </x-_admin_brand_form>
     </form>
 </x-_content_container>
 @endsection
