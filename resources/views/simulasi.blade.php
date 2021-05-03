@@ -151,14 +151,13 @@
     function gantiKompatibilitas() {
         resetKomponenUtama()
         kompatibilitas = document.getElementById('kompatibilitas').value
-        console.log(`Kompatibilitas set to ${kompatibilitas}`)
         document.getElementById('socket-default').selected = true
         document.getElementById('brand-default').selected = true
         if(kompatibilitas == 'false') {
             document.getElementById('socket-prosesor').disabled = true
             document.getElementById('brand-prosesor').disabled = true
-            fetchProsesorOrMotherboard('prosesor', kompatibilitas, -1, resetProsesor())
-            fetchProsesorOrMotherboard('motherboard', kompatibilitas, -1, resetMotherboard())
+            fetchProsesorOrMotherboard('prosesor', false, -1, resetProsesor())
+            fetchProsesorOrMotherboard('motherboard', false, -1, resetMotherboard())
         } else {
             document.getElementById('socket-prosesor').disabled = false
             document.getElementById('brand-prosesor').disabled = false
