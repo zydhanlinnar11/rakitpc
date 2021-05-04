@@ -18,24 +18,45 @@
       </div>
     </div>
 </div>
+<div class="modal fade" id="fail-modal" tabindex="-1" aria-labelledby="fail-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="fail-modal-label">Ganti kompatibilitas?</h5>
+          <button type="button" class="btn-close fail-modal-btn" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="fail-modal-body">
+            Database error. Coba lagi nanti
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary fail-modal-btn" data-bs-dismiss="modal">Oke</button>
+        </div>
+      </div>
+    </div>
+</div>
 <div class="card-container">
-    <h1 class="card-container-title">Simulasi</h1>
+    <h1 id="card-container-title" class="card-container-title" data-invalid="{{$edit_kode_invalid ? 'true' : 'false'}}">Simulasi</h1>
     <hr>
-    <form action="">
+    @if ($edit_kode_invalid)
+    <div class="alert alert-danger" role="alert">
+        Kode simulasi '{{$edit_kode_simulasi}}' tidak valid. Simulasi ini akan membuat data simulasi baru.
+    </div>
+    @endif
+    <form action="javascript:saveSimulasi()">
         <h6>Opsi kompatibilitas:</h6>
         <div class="row mb-3" id="bagian-kompatibilitas">
             <div class="input-group">
                 <span class="input-group-text">Sesuaikan kompatibilitas:</span>
                 <select id="kompatibilitas" onchange="(new bootstrap.Modal(document.getElementById('warning-modal'))).toggle()" class="form-select">
-                    <option value="true" selected>Ya</option>
-                    <option value="false">Tidak</option>
+                    <option value="true" {{!$edit_kode_invalid && $data_simulasi->kompatibilitas ? 'selected' : ''}}>Ya</option>
+                    <option value="false" {{!$edit_kode_invalid && !$data_simulasi->kompatibilitas ? 'selected' : ''}}>Tidak</option>
                 </select>
             </div>
         </div>
         <div class="row mb-3" id="bagian-brand-prosesor">
             <div class="input-group">
                 <span class="input-group-text">Brand prosesor:</span>
-                <select id="brand-prosesor" onchange="onChangeProcessorBrand(this)" class="form-select">
+                <select id="brand-prosesor" onchange="onChangeProcessorBrand()" class="form-select">
                     <option id="brand-default" value="">Pilih brand</option>
                     @foreach ($brand_processor as $brand)
                     <option value="{{$brand->id}}">{{$brand->nama}}</option>
@@ -46,7 +67,7 @@
         <div class="row mb-3" id="bagian-socket-prosesor">
             <div class="input-group">
                 <span class="input-group-text">Socket prosesor:</span>
-                <select id="socket-prosesor" onchange="onChangeProcessorSocket(this)" class="form-select">
+                <select id="socket-prosesor" onchange="onChangeProcessorSocket()" class="form-select">
                     <option id="socket-default" value="" selected>Pilih socket</option>
                 </select>
             </div>
@@ -91,7 +112,9 @@
                     <select id="ram" class="form-select" onchange="setHarga('ram')">
                         <option value="" data-harga="0">Pilih Memori RAM</option>
                         @foreach ($list_ram as $item)
-                        <option value="{{$item->id}}" data-harga="{{$item->harga}}">{{$item->nama}}</option>
+                        <option value="{{$item->id}}" data-harga="{{$item->harga}}"
+                            {{!$edit_kode_invalid && $data_simulasi->id_ram == $item->id ? 'selected' : ''}}
+                            >{{$item->nama}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -113,14 +136,18 @@
                         <option value="" data-harga="0">Pilih {{$kategori->nama}}</option>
                         @foreach ($list_item as $item)
                         @if ($item->id_kategori == $kategori->id)
-                        <option value="{{$item->id}}" data-harga="{{$item->harga}}">{{$item->nama}}</option>
+                        <option value="{{$item->id}}" data-harga="{{$item->harga}}"
+                            {{!$edit_kode_invalid && $data_simulasi->{'id_'.str_replace('-', '_', $kategori->url)} == $item->id ? 'selected' : ''}}
+                            >{{$item->nama}}</option>
                         @endif
                         @endforeach
                     </select>
                 </div>
             </div>
             <div class="col-1">
-                <input type="number" class="form-control" name="jumlah-{{$kategori->url}}" id="jumlah-{{$kategori->url}}" value="1" min="0" onchange="setHarga('{{$kategori->url}}')">
+                <input type="number" class="form-control" name="jumlah-{{$kategori->url}}" id="jumlah-{{$kategori->url}}"
+                value="{{!$edit_kode_invalid && isset($data_simulasi->{'jumlah_'.str_replace('-', '_', $kategori->url)}) ? $data_simulasi->{'jumlah_'.str_replace('-', '_', $kategori->url)} : 1}}"
+                min="0" onchange="setHarga('{{$kategori->url}}')">
             </div>
             <div class="col-2">
                 <input type="text" class="form-control" name="harga-{{$kategori->url}}" value="Rp 0,00" id="harga-{{$kategori->url}}" readonly>
@@ -138,15 +165,67 @@
                 <button type="reset" class="btn btn-warning mb-3 col-12" id="reset-simulasi">Reset simulasi</button>
             </div>
             <div class="col-6 mb-3">
-                <button class="btn btn-primary mb-3 col-12" id="preview-simulasi">Preview simulasi</button>
+                <button type="submit" class="btn btn-primary mb-3 col-12" id="preview-simulasi">Preview simulasi</button>
             </div>
         </div>
     </form>
 </div>
 <script>
     let totalHarga = 0
-    let harga = {}
+    const harga = {}
     let kompatibilitas = document.getElementById('kompatibilitas').value
+    const slugBarang = ['prosesor', 'motherboard', 'ram', 'hard-disk', 'ssd', 'casing'
+    , 'graphics-card', 'power-supply', 'keyboard', 'mouse', 'monitor', 'cpu-cooler', 'software']
+    const xhr = new XMLHttpRequest()
+
+    // Kalo ngedit
+    const kodeSimulasi = (new URLSearchParams(window.location.search)).get('kode_simulasi')
+    gantiKompatibilitas()
+    fetch(`{{route('api.simulasi.kompatibilitas')}}?kode_simulasi=${kodeSimulasi}`).then(res => res.json())
+        .then(obj => setKompatibilitasSaatEdit(obj))
+        .catch(err => console.error(err))
+
+    function setKompatibilitasSaatEdit(obj = {}) {
+        if('id_brand' in obj) {
+            document.getElementById('brand-prosesor').value = obj['id_brand']
+            onChangeProcessorBrand(obj)
+        }
+    }
+
+    function createSimulasiObject() {
+        const brandProcessor = document.getElementById('brand-prosesor').value
+        const socketProcessor = document.getElementById('socket-prosesor').value
+        const reqObj = {kompatibilitas, brandProcessor, socketProcessor}
+        slugBarang.forEach(slug => {
+            const id = document.getElementById(slug).value
+            const jumlah = document.getElementById(`jumlah-${slug}`).value
+            if(id != "" && jumlah != "")
+                reqObj[slug.replace('-', '_')] = {id, jumlah}
+        })
+        return reqObj
+    }
+
+    xhr.onreadystatechange = () => {
+        if(xhr.readyState == xhr.DONE) {
+            if(xhr.status == 200) {
+                window.open(`/simulasi/preview?kode_simulasi=${JSON.parse(xhr.response).kodeSimulasi}`, '_self')
+            } else {
+                (new bootstrap.Modal(document.getElementById('fail-modal'))).toggle()
+            }
+        }
+    }
+
+    function submitSimulasiObject(obj) {
+        const isEdit = document.getElementById('card-container-title').dataset['invalid'] == 'false'
+        xhr.open(isEdit ? 'PATCH' : 'POST', `/api/simulasi${isEdit ? `?kode_simulasi=${kodeSimulasi}` : ''}`, true)
+        xhr.setRequestHeader('Content-Type', 'application/json')
+        xhr.send(JSON.stringify(obj))
+    }
+
+    function saveSimulasi() {
+        const simulasiObj = createSimulasiObject()
+        submitSimulasiObject(simulasiObj)
+    }
 
     function gantiKompatibilitas() {
         resetKomponenUtama()
@@ -172,9 +251,9 @@
         return (new Intl.NumberFormat('ID', {style: 'currency', currency: 'IDR'})).format(value)
     }
 
-    function onChangeProcessorBrand(selected) {
+    function onChangeProcessorBrand(obj = "noedit") {
         const processorBrandSelect = document.getElementById('socket-prosesor')
-        const url = `/api/socket?id_brand=${selected.value}`
+        const url = `/api/socket?id_brand=${document.getElementById('brand-prosesor').value}`
         fetch(url).then(res => res.json()).then(socketList => {
             resetSocketProsesor()
             resetKomponenUtama()
@@ -184,21 +263,20 @@
                 option.text = socket.nama
                 processorBrandSelect.add(option)
             })
+            if(obj != 'noedit' && 'id_socket' in obj) {
+                document.getElementById('socket-prosesor').value = obj['id_socket']
+                onChangeProcessorSocket(obj)
+            }
         }).catch(err => console.error(err))
     }
 
-    function onChangeProcessorSocket(selected) {
+    function onChangeProcessorSocket(obj = "noedit") {
+        const selected = document.getElementById('socket-prosesor')
         const useCompatibility = kompatibilitas
-        let urlMotherboard = '/api/motherboard'
-
-        if(useCompatibility) {
-            const query = `?id_socket=${(selected.value == '' ? -1 : selected.value)}`
-            urlMotherboard += query
-        }
         
         resetKomponenUtama()
-        fetchProsesorOrMotherboard('prosesor', useCompatibility, selected.value, resetProsesor())
-        fetchProsesorOrMotherboard('motherboard', useCompatibility, selected.value, resetMotherboard())
+        fetchProsesorOrMotherboard('prosesor', useCompatibility, selected.value, resetProsesor(), obj)
+        fetchProsesorOrMotherboard('motherboard', useCompatibility, selected.value, resetMotherboard(), obj)
     }
 
     function resetProsesor() {
@@ -215,7 +293,7 @@
         setHarga('motherboard')
     }
 
-    function fetchProsesorOrMotherboard(whatToFetch = '', useCompatibility = false, id = 0, resetCallback = (() => null)) {
+    function fetchProsesorOrMotherboard(whatToFetch = '', useCompatibility = false, id = 0, resetCallback = (() => null), obj = "noedit") {
         if(useCompatibility && !id) id = -1
         let url = `/api/${whatToFetch}${useCompatibility ? `?id_socket=${id}` : ''}`
         const select = document.getElementById(whatToFetch)
@@ -228,6 +306,12 @@
                 option.dataset.harga = item.harga
                 select.add(option)
             })
+            if(obj != 'noedit' && `id_${whatToFetch}` in obj) {
+                document.getElementById(whatToFetch).value = obj[`id_${whatToFetch}`]
+            }
+            if(obj != 'noedit' && whatToFetch == 'motherboard') {
+                slugBarang.forEach(barang => setHarga(barang))
+            }
         }).catch(err => console.error(err))
     }
 

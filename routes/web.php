@@ -27,7 +27,7 @@ Route::get('/item', function (Request $request) {
     if($request->input('item_id') != '')
         return $itemcontroller->show_an_item($request);
     return abort(404);
-});
+})->name('item.view');
 
 Route::get('/items', function (Request $request) {
     $itemcontroller = new ItemController;
@@ -37,7 +37,9 @@ Route::get('/items', function (Request $request) {
 
 Route::get('/kategori', [KategoriController::class, 'show_all']);
 
-Route::get('/simulasi', [SimulasiController::class, 'simulasi']);
+Route::get('/simulasi', [SimulasiController::class, 'simulasi'])->name('simulasi');
+
+Route::get('/simulasi/preview', [SimulasiController::class, 'preview_simulasi'])->name('simulasi.preview');
 
 Route::get('/admin', [AdminController::class, 'dashboard']);
 

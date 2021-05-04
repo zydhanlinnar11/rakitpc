@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fe46f132b52466ff1cf3afab4d56c8a4",
+    "content-hash": "4cc69d7029e7378f40c9bdeb064cb786",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1010,6 +1010,50 @@
                 }
             ],
             "time": "2020-10-22T13:57:20+00:00"
+        },
+        {
+            "name": "gpslab/base64uid",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gpslab/base64uid.git",
+                "reference": "c818a069ff6b8b8aec58977b41278224b93e7349"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gpslab/base64uid/zipball/c818a069ff6b8b8aec58977b41278224b93e7349",
+                "reference": "c818a069ff6b8b8aec58977b41278224b93e7349",
+                "shasum": ""
+            },
+            "require": {
+                "paragonie/random_compat": ">=2",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^1.0",
+                "phpunit/phpunit": "^4.8.36",
+                "scrutinizer/ocular": "^1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "GpsLab\\Component\\Base64UID\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Generate UID like YouTube",
+            "homepage": "https://github.com/gpslab/payload",
+            "keywords": [
+                "UID"
+            ],
+            "support": {
+                "issues": "https://github.com/gpslab/base64uid/issues",
+                "source": "https://github.com/gpslab/base64uid/tree/master"
+            },
+            "time": "2020-01-14T15:13:10+00:00"
         },
         {
             "name": "graham-campbell/result-type",
@@ -2164,6 +2208,56 @@
                 "source": "https://github.com/opis/closure/tree/3.6.1"
             },
             "time": "2020-11-07T02:01:34+00:00"
+        },
+        {
+            "name": "paragonie/random_compat",
+            "version": "v9.99.100",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/paragonie/random_compat.git",
+                "reference": "996434e5492cb4c3edcb9168db6fbb1359ef965a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/996434e5492cb4c3edcb9168db6fbb1359ef965a",
+                "reference": "996434e5492cb4c3edcb9168db6fbb1359ef965a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">= 7"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*|5.*",
+                "vimeo/psalm": "^1"
+            },
+            "suggest": {
+                "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paragon Initiative Enterprises",
+                    "email": "security@paragonie.com",
+                    "homepage": "https://paragonie.com"
+                }
+            ],
+            "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
+            "keywords": [
+                "csprng",
+                "polyfill",
+                "pseudorandom",
+                "random"
+            ],
+            "support": {
+                "email": "info@paragonie.com",
+                "issues": "https://github.com/paragonie/random_compat/issues",
+                "source": "https://github.com/paragonie/random_compat"
+            },
+            "time": "2020-10-15T08:29:30+00:00"
         },
         {
             "name": "phpoption/phpoption",

@@ -7,15 +7,17 @@ use Illuminate\View\Component;
 class _content_container extends Component
 {
     public $pageTitle;
+    public $href;
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($pageTitle)
+    public function __construct($pageTitle, $href)
     {
         //
         $this->pageTitle = $pageTitle;
+        $this->href = $href;
     }
 
     /**
