@@ -37,7 +37,7 @@
 <div class="card-container">
     <h1 id="card-container-title" class="card-container-title" data-invalid="{{$edit_kode_invalid ? 'true' : 'false'}}">Simulasi</h1>
     <hr>
-    @if ($edit_kode_invalid)
+    @if ($edit_kode_invalid && $edit_kode_simulasi != '')
     <div class="alert alert-danger" role="alert">
         Kode simulasi '{{$edit_kode_simulasi}}' tidak valid. Simulasi ini akan membuat data simulasi baru.
     </div>
@@ -48,8 +48,8 @@
             <div class="input-group">
                 <span class="input-group-text">Sesuaikan kompatibilitas:</span>
                 <select id="kompatibilitas" onchange="(new bootstrap.Modal(document.getElementById('warning-modal'))).toggle()" class="form-select">
-                    <option value="true" {{!$edit_kode_invalid && $data_simulasi->kompatibilitas ? 'selected' : ''}}>Ya</option>
-                    <option value="false" {{!$edit_kode_invalid && !$data_simulasi->kompatibilitas ? 'selected' : ''}}>Tidak</option>
+                    <option value="true" {{!$edit_kode_invalid && isset($data_simulasi->kompatibilitas) && $data_simulasi->kompatibilitas? 'selected' : ''}}>Ya</option>
+                    <option value="false" {{!$edit_kode_invalid && isset($data_simulasi->kompatibilitas) && !$data_simulasi->kompatibilitas ? 'selected' : ''}}>Tidak</option>
                 </select>
             </div>
         </div>
@@ -113,7 +113,9 @@
                         <option value="" data-harga="0">Pilih Memori RAM</option>
                         @foreach ($list_ram as $item)
                         <option value="{{$item->id}}" data-harga="{{$item->harga}}"
+                            @isset($data_simulasi->id_ram)
                             {{!$edit_kode_invalid && $data_simulasi->id_ram == $item->id ? 'selected' : ''}}
+                            @endisset
                             >{{$item->nama}}</option>
                         @endforeach
                     </select>
@@ -137,7 +139,9 @@
                         @foreach ($list_item as $item)
                         @if ($item->id_kategori == $kategori->id)
                         <option value="{{$item->id}}" data-harga="{{$item->harga}}"
+                            @isset($data_simulasi->{'id_'.str_replace('-', '_', $kategori->url)})
                             {{!$edit_kode_invalid && $data_simulasi->{'id_'.str_replace('-', '_', $kategori->url)} == $item->id ? 'selected' : ''}}
+                            @endisset
                             >{{$item->nama}}</option>
                         @endif
                         @endforeach
@@ -188,6 +192,8 @@
     function setKompatibilitasSaatEdit(obj = {}) {
         if('id_brand' in obj) {
             document.getElementById('brand-prosesor').value = obj['id_brand']
+            if(obj['id_brand'] == null)
+                document.getElementById('brand-default').selected = true
             onChangeProcessorBrand(obj)
         }
     }
@@ -265,6 +271,8 @@
             })
             if(obj != 'noedit' && 'id_socket' in obj) {
                 document.getElementById('socket-prosesor').value = obj['id_socket']
+                if(obj['id_socket'] == null)
+                    document.getElementById('socket-default').selected = true
                 onChangeProcessorSocket(obj)
             }
         }).catch(err => console.error(err))
@@ -294,6 +302,7 @@
     }
 
     function fetchProsesorOrMotherboard(whatToFetch = '', useCompatibility = false, id = 0, resetCallback = (() => null), obj = "noedit") {
+        useCompatibility = useCompatibility == 'true'
         if(useCompatibility && !id) id = -1
         let url = `/api/${whatToFetch}${useCompatibility ? `?id_socket=${id}` : ''}`
         const select = document.getElementById(whatToFetch)
@@ -306,7 +315,7 @@
                 option.dataset.harga = item.harga
                 select.add(option)
             })
-            if(obj != 'noedit' && `id_${whatToFetch}` in obj) {
+            if(obj != 'noedit' && `id_${whatToFetch}` in obj && obj[`id_${whatToFetch}`]) {
                 document.getElementById(whatToFetch).value = obj[`id_${whatToFetch}`]
             }
             if(obj != 'noedit' && whatToFetch == 'motherboard') {

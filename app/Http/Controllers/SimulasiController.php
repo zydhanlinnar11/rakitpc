@@ -16,9 +16,9 @@ class SimulasiController extends Controller
         try {
             $tabel_data_simulasi = DB::table('data_simulasi')->where('id_simulasi', '=', $edit_kode_simulasi)->get();
             $data_simulasi = $tabel_data_simulasi;
-            if($edit_kode_simulasi != '' && $tabel_data_simulasi->count() != 1) {
+            if($edit_kode_invalid && $tabel_data_simulasi->count() != 1) {
                 $edit_kode_invalid = true;
-            } else {
+            } else if(isset($data_simulasi[0])) {
                 $data_simulasi = $data_simulasi[0];
             }
             $brand_processor = DB::table('brands')->select('id', 'nama')->where('nama', '=', 'AMD')->orWhere('nama', '=', 'Intel')->get();
@@ -72,6 +72,8 @@ class SimulasiController extends Controller
         } catch (QueryException $e) {
             return response()->json(["message" => "Database error."], 500);
         }
-        return view('simulasi.preview', compact('array_simulasi', 'kompatibilitas', 'kode_simulasi', 'brand', 'socket', 'total_harga', 'created_at', 'updated_at'));
+        if(isset($brand) && isset($socket))
+            return view('simulasi.preview', compact('array_simulasi', 'kompatibilitas', 'kode_simulasi', 'brand', 'socket', 'total_harga', 'created_at', 'updated_at'));
+        return view('simulasi.preview', compact('array_simulasi', 'kompatibilitas', 'kode_simulasi', 'total_harga', 'created_at', 'updated_at'));
     }
 }
