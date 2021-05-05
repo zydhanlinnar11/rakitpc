@@ -2,9 +2,6 @@ function setNavButtonClickability() {
     document.getElementById("nav-button-simulasi").onclick = () =>
         window.open("/simulasi", "_self");
 
-    document.getElementById("nav-button-admin").onclick = () =>
-        window.open("/admin", "_self");
-
     document.getElementById("nav-button-home").onclick = () =>
         window.open("/", "_self");
 }

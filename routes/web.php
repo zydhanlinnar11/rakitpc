@@ -5,6 +5,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\SimulasiController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -73,6 +74,13 @@ Route::get('/admin/edit-socket', [AdminController::class, 'edit_socket']);
 
 Route::get('/admin/daftar-socket', [AdminController::class, 'daftar_socket']);
 
-// Auth::routes();
+Auth::routes();
+
+Route::get('/logout', function(Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect()->intended('/');
+});
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

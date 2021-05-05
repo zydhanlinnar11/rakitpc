@@ -5,6 +5,10 @@
         <div class="nav-vertical-divider"></div>
         <button class="nav-button" id="nav-button-simulasi">Simulasi</button>
         <div class="nav-vertical-divider"></div>
-        <button class="nav-button" id="nav-button-admin">Admin</button>
+        @if (Auth::check())
+        <button onclick="window.open('{{route('logout')}}', '_self')" class="nav-button" id="nav-button-admin">Log out</button>
+        @else
+        <button onclick="window.open('{{route('login')}}', '_self')" class="nav-button" id="nav-button-admin">Login</button>
+        @endif
     </nav>
 </header>
