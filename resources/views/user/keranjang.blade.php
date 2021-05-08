@@ -14,7 +14,7 @@
           </tr>
         </thead>
         <tbody>
-          {{-- @foreach ($array_simulasi as $item)
+          @foreach ($list as $item)
           <tr>
             <th scope="row">{{$item['kategori']}}</th>
             <td><img src="{{$item['url_gambar']}}" alt="Gambar dari {{$item['nama']}}" style="max-height: 50px;"></td>
@@ -23,7 +23,7 @@
             <td>{{$item['jumlah']}}</td>
             <td>Rp {{number_format($item['harga'] * $item['jumlah'], 2)}}</td>
           </tr>
-          @endforeach --}}
+          @endforeach
         </tbody>
     </table>
     {{-- <div class="text-end mb-3">
@@ -35,7 +35,7 @@
                 class="btn btn-secondary col-12">Ubah</button>
         </div>
         <div class="col-6">
-            <button class="btn btn-primary col-12">Tambahkan semua ke keranjang</button>
+            <button class="btn btn-primary col-12">Checkout</button>
         </div>
     </div>
 </x-_content_container>

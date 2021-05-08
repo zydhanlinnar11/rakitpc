@@ -9,7 +9,7 @@ class data_simulasi extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $table = 'data_simulasi';
 
     public function items() {
         return $this->hasMany(item::class);

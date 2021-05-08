@@ -3,7 +3,7 @@
 @section('main-content')
 <x-_content_container :pageTitle="'Tambah subkategori'">
     <x-_admin_form_alert />
-    <form action="javascript:tambahSubkategori()" method="POST">
+    <form action="javascript:getToken(tambahSubkategori, '{{csrf_token()}}')" method="POST">
         @csrf
         <x-_admin_subkategori_form :subkategori='null'
           :listKategori='$list_kategori'>

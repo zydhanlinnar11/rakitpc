@@ -4,7 +4,7 @@
 <x-_modal_two_buttons :id="'delete-modal'" :title="'Hapus socket?'"
     :prompt="'Yakin ingin menghapus '.$socket->nama.'? Tindakan ini tidak dapat dibatalkan setelah dieksekusi.'">
     <x-slot name="button_action">
-        <button onclick="deleteSocket()" type="button" class="btn btn-danger delete-modal-btn">Hapus</button>
+        <button onclick="getToken(deleteSocket, '{{csrf_token()}}')" type="button" class="btn btn-danger delete-modal-btn">Hapus</button>
     </x-slot>
 </x-_modal_two_buttons>
 <x-_content_container :pageTitle="'Edit socket '.$socket->nama">
@@ -14,7 +14,7 @@
     </div>   
     @endif
     <x-_admin_form_alert />
-    <form action="javascript:editSocket()" method="POST">
+    <form action="javascript:getToken(editSocket, '{{csrf_token()}}')" method="POST">
         @csrf
         <x-_admin_socket_form :socket='$socket'
           :listBrand='$list_brand'>
@@ -54,14 +54,15 @@
         }
     };
     
-    function deleteSocket() {
+    function deleteSocket(token) {
         const id = (new URLSearchParams(window.location.search)).get('id')
         xhr.open("DELETE", "/api/admin/edit-socket", true)
         xhr.setRequestHeader("Content-Type", "application/json")
+        xhr.setRequestHeader("Authorization", `Bearer ${token}`)
         xhr.send(JSON.stringify({id}))
     }
 
-    function editSocket() {
+    function editSocket(token) {
       const id = (new URLSearchParams(window.location.search)).get('id')
       const nama = document.getElementById("nama").value;
       const idBrand = document.getElementById("brand").value;
@@ -70,6 +71,7 @@
 
       closeAlert();
       ajax.setRequestHeader("Content-Type", "application/json");
+      ajax.setRequestHeader("Authorization", `Bearer ${token}`)
       ajax.send(JSON.stringify({ id, nama, idBrand }));
     }
 </script>

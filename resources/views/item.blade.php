@@ -2,56 +2,61 @@
 
 @section('main-content')
 <x-_content_container :pageTitle='$item->nama'>
+  <x-_admin_form_alert />
   <div class="row mb-3">
     <div class="col-xl-6 text-center">
-        <img src="{{$item->url_gambar}}" alt="Gambar dari {{$item->nama}}" style="max-height: 350px">
+        <img src="{{$item->url_gambar}}" class="img-fluid" alt="Gambar dari {{$item->nama}}" style="max-height: 350px">
     </div>
     <div class="col-xl-6">
-        <table class="table col-xl-6">
-            <thead>
-              <tr>
-                <th scope="col">Spesifikasi</th>
-                <th scope="col">Keterangan</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">Nama produk:</th>
-                <td>{{$item->nama}}</td>
-              </tr>
-              <tr>
-                <th scope="row">Brand:</th>
-                <td>{{$nama_brand}}</td>
-              </tr>
-              <tr>
-                <th scope="row">Kategori:</th>
-                <td>{{$nama_kategori}}</td>
-              </tr>
-              <tr>
-                <th scope="row">Subkategori:</th>
-                <td>{{$nama_subkategori}}</td>
-              </tr>
-              @if ($is_this_processor_or_motherboard)
-              <tr>
-                <th scope="row">Socket prosesor:</th>
-                <td>{{$nama_socket}}</td>
-              </tr>
-              @endif
-              <tr>
-                <th scope="row">Berat produk:</th>
-                <td>{{$item->berat}} kg</td>
-              </tr>
-              <tr>
-                <th scope="row">Harga produk:</th>
-                <td>Rp. {{number_format($item->harga, 2, ',', '.')}}</td>
-              </tr>
-              <tr>
-                <th scope="row">Jumlah stok:</th>
-                <td>{{$item->stok}} unit</td>
-              </tr>
-            </tbody>
-          </table>
-      </div>
+      <table class="table col-xl-6">
+        <thead>
+          <tr>
+            <th scope="col">Spesifikasi</th>
+            <th scope="col">Keterangan</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Nama produk:</th>
+            <td>{{$item->nama}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Brand:</th>
+            <td>{{$nama_brand}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Kategori:</th>
+            <td>{{$nama_kategori}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Subkategori:</th>
+            <td>{{$nama_subkategori}}</td>
+          </tr>
+          @if ($is_this_processor_or_motherboard)
+          <tr>
+            <th scope="row">Socket prosesor:</th>
+            <td>{{$nama_socket}}</td>
+          </tr>
+          @endif
+          <tr>
+            <th scope="row">Berat produk:</th>
+            <td>{{$item->berat}} kg</td>
+          </tr>
+          <tr>
+            <th scope="row">Harga produk:</th>
+            <td>Rp. {{number_format($item->harga, 2, ',', '.')}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Jumlah stok:</th>
+            <td>{{$item->stok}} unit</td>
+          </tr>
+        </tbody>
+      </table>
+      <form action="javascript:getToken(addToKeranjang, '{{csrf_token()}}')">
+        <input type="text" name="id_produk" id="id" value="{{$item->id}}" hidden>
+        <button type="submit" class="btn btn-primary">Tambahkan ke keranjang</button>
+      </form>
+    </div>
   </div>
 
   <hr>
@@ -63,4 +68,21 @@
       @endforeach
   </div>
 </x-_content_container>
+
+<script>  
+  function addToKeranjang(token) {
+      const id_produk = document.getElementById("id").value
+      ajax.onreadystatechange = () => {
+        if(ajax.readyState == ajax.DONE) {
+          showAlert(ajax.status == 200 ? "success" : "danger", ajax.status == 200 ?
+          "Produk berhasil ditambahkan ke keranjang" : "Produk gagal ditambahkan ke keranjang")
+        }
+      }
+      closeAlert()
+      ajax.open("POST", "{{route('user.keranjang.tambah')}}", true)
+      ajax.setRequestHeader("Content-Type", "application/json")
+      ajax.setRequestHeader("Authorization", `Bearer ${token}`)
+      ajax.send(JSON.stringify({id_produk}))
+  }
+</script>
 @endsection

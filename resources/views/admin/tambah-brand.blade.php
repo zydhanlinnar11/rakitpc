@@ -3,7 +3,7 @@
 @section('main-content')
 <x-_content_container :pageTitle="'Tambah brand'">
     <x-_admin_form_alert />
-    <form action="javascript:tambahBrand()" method="POST">
+    <form action="javascript:getToken(tambahBrand, '{{csrf_token()}}')" method="POST">
         @csrf
         <x-_admin_brand_form :brand='null'>
             <x-slot name="middle_button">

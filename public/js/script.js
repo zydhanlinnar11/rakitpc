@@ -41,7 +41,7 @@ ajax.onreadystatechange = () => {
     }
 };
 
-function tambahKategori() {
+function tambahKategori(token) {
     const nama = document.getElementById("nama").value;
     const faClass = document.getElementById("fa-class").value;
 
@@ -49,10 +49,11 @@ function tambahKategori() {
 
     closeAlert();
     ajax.setRequestHeader("Content-Type", "application/json");
+    ajax.setRequestHeader("Authorization", `Bearer ${token}`);
     ajax.send(JSON.stringify({ nama, faClass }));
 }
 
-function tambahBrand() {
+function tambahBrand(token) {
     const nama = document.getElementById("nama").value;
     const deskripsi = document.getElementById("deskripsi").value;
     const urlLogo = document.getElementById("url_logo").value;
@@ -61,10 +62,11 @@ function tambahBrand() {
 
     closeAlert();
     ajax.setRequestHeader("Content-Type", "application/json");
+    ajax.setRequestHeader("Authorization", `Bearer ${token}`);
     ajax.send(JSON.stringify({ nama, deskripsi, urlLogo }));
 }
 
-function editKategori() {
+function editKategori(token) {
     const nama = document.getElementById("nama").value;
     const faClass = document.getElementById("fa-class").value;
     const idKategori = document.getElementById("id_kategori").value;
@@ -73,10 +75,11 @@ function editKategori() {
 
     closeAlert();
     ajax.setRequestHeader("Content-Type", "application/json");
+    ajax.setRequestHeader("Authorization", `Bearer ${token}`);
     ajax.send(JSON.stringify({ nama, faClass, idKategori }));
 }
 
-function tambahSubkategori() {
+function tambahSubkategori(token) {
     const nama = document.getElementById("nama").value;
     const idKategori = document.getElementById("kategori").value;
     const deskripsi = document.getElementById("deskripsi").value;
@@ -87,10 +90,11 @@ function tambahSubkategori() {
 
     closeAlert();
     ajax.setRequestHeader("Content-Type", "application/json");
+    ajax.setRequestHeader("Authorization", `Bearer ${token}`);
     ajax.send(JSON.stringify({ nama, idKategori, deskripsi }));
 }
 
-function tambahSocket() {
+function tambahSocket(token) {
     const nama = document.getElementById("nama").value;
     const idBrand = document.getElementById("brand").value;
 
@@ -98,10 +102,11 @@ function tambahSocket() {
 
     closeAlert();
     ajax.setRequestHeader("Content-Type", "application/json");
+    ajax.setRequestHeader("Authorization", `Bearer ${token}`);
     ajax.send(JSON.stringify({ nama, idBrand }));
 }
 
-function tambahItem() {
+function tambahItem(token) {
     const nama = document.getElementById("nama").value;
     const berat = document.getElementById("berat").value;
     const harga = document.getElementById("harga").value;
@@ -129,10 +134,11 @@ function tambahItem() {
 
     closeAlert();
     ajax.setRequestHeader("Content-Type", "application/json");
+    ajax.setRequestHeader("Authorization", `Bearer ${token}`);
     ajax.send(JSON.stringify(obj));
 }
 
-function editItem() {
+function editItem(token) {
     const id = document.getElementById("id").value;
     const nama = document.getElementById("nama").value;
     const berat = document.getElementById("berat").value;
@@ -162,6 +168,7 @@ function editItem() {
 
     closeAlert();
     ajax.setRequestHeader("Content-Type", "application/json");
+    ajax.setRequestHeader("Authorization", `Bearer ${token}`);
     ajax.send(JSON.stringify(obj));
 }
 
@@ -183,7 +190,6 @@ function onchangeKategori() {
     const subkategoriSelect = document.getElementById("subkategori");
     const socketSelect = document.getElementById("socket");
     const subkategoriSelectElements = subkategoriSelect.length;
-    // console.log(socketSelect.dataset.onIfKategoriId);
     if (
         kategoriSelect.value == socketSelect.dataset.motherboardCategoryId ||
         kategoriSelect.value == socketSelect.dataset.processorCategoryId
@@ -207,4 +213,18 @@ function onchangeKategori() {
                 subkategoriSelect.add(option);
             })
         );
+}
+
+function getToken(callback, csrf_token) {
+    const xhrForToken = new XMLHttpRequest();
+    xhrForToken.onreadystatechange = () => {
+        if (
+            xhrForToken.readyState == xhrForToken.DONE &&
+            typeof callback == "function"
+        )
+            callback(JSON.parse(xhrForToken.response).token);
+    };
+    xhrForToken.open("POST", "/user/tokens/create", true);
+    xhrForToken.setRequestHeader("X-CSRF-TOKEN", csrf_token);
+    xhrForToken.send();
 }

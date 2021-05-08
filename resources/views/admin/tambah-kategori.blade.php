@@ -3,7 +3,7 @@
 @section('main-content')
 <x-_content_container :pageTitle="'Tambah kategori'">
     <x-_admin_form_alert />
-    <form action="javascript:tambahKategori()" method="POST">
+    <form action="javascript:getToken(tambahKategori, '{{csrf_token()}}')" method="POST">
         @csrf
         <x-_admin_kategori_form :kategori='null'>
             <x-slot name="button_mid">

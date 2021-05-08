@@ -4,7 +4,7 @@
 <x-_modal_two_buttons :id="'delete-modal'" :title="'Hapus brand?'"
     :prompt="'Yakin ingin menghapus '.$brand->nama.'? Tindakan ini tidak dapat dibatalkan setelah dieksekusi.'">
     <x-slot name="button_action">
-        <button onclick="deleteBrand()" type="button" class="btn btn-danger delete-modal-btn">Hapus</button>
+        <button onclick="getToken(deleteBrand, '{{csrf_token()}}')" type="button" class="btn btn-danger delete-modal-btn">Hapus</button>
     </x-slot>
 </x-_modal_two_buttons>
 <x-_content_container :pageTitle="'Edit brand '.$brand->nama">
@@ -14,7 +14,7 @@
     </div>   
     @endif
     <x-_admin_form_alert />
-    <form action="javascript:editBrand()">
+    <form action="javascript:getToken(editBrand, '{{csrf_token()}}')">
         @csrf
         <x-_admin_brand_form :brand='$brand'>
             <x-slot name="middle_button">
@@ -53,23 +53,24 @@
         }
     };
     
-    function deleteBrand() {
+    function deleteBrand(token) {
         const id = (new URLSearchParams(window.location.search)).get('id')
         xhr.open("DELETE", "/api/admin/edit-brand", true)
         xhr.setRequestHeader("Content-Type", "application/json")
+        xhr.setRequestHeader("Authorization", `Bearer ${token}`)
         xhr.send(JSON.stringify({id}))
     }
 
-    function editBrand() {
+    function editBrand(token) {
         const id = (new URLSearchParams(window.location.search)).get('id')
         const nama = document.getElementById("nama").value;
         const deskripsi = document.getElementById("deskripsi").value;
         const urlLogo = document.getElementById("url_logo").value;
-
+        
         ajax.open("PATCH", "/api/admin/edit-brand", true);
-
         closeAlert();
         ajax.setRequestHeader("Content-Type", "application/json");
+        ajax.setRequestHeader("Authorization", `Bearer ${token}`)
         ajax.send(JSON.stringify({ id, nama, deskripsi, urlLogo }));
     }
 </script>

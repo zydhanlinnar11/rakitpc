@@ -3,7 +3,7 @@
 @section('main-content')
 <x-_content_container :pageTitle="'Tambah produk'">
     <x-_admin_form_alert />
-    <form action="javascript:tambahItem()" method="POST">
+    <form action="javascript:getToken(tambahItem, '{{csrf_token()}}')" method="POST">
         <x-_admin_produk_form :listKategori='$list_kategori' :listBrand='$list_brand'
         :processorCategoryId='$prosesor_kategori_id' :motherboardCategoryId="$motherboard_kategori_id"
         :listSocket='$list_socket' :produk='null' :isThisProcessorOrMotherboard='false'>

@@ -5,6 +5,7 @@
     <div class="alert alert-info" role="alert">
       Simulasi dibuat pada {{$created_at}} dan terakhir diubah pada {{$updated_at}}. Harga yang ditampilkan menunjukkan harga saat ini yang dapat berubah sewaktu-waktu.
     </div>
+    <x-_admin_form_alert />
     <h6>Menggunakan kompatibilitas: {{$kompatibilitas ? "Ya" : "Tidak"}}</h6>
     @if ($kompatibilitas && isset($brand) && isset($socket))
     <h6>Setup kompatibilitas: {{$brand}} ({{$socket}})</h6>
@@ -41,9 +42,25 @@
             <button onclick="window.open(`{{route('simulasi')}}?kode_simulasi=${new URLSearchParams(window.location.search).get('kode_simulasi')}`, '_self')"
                 class="btn btn-secondary col-12">Ubah</button>
         </div>
-        <div class="col-6">
+        <form action="javascript:getToken(addToKeranjang, '{{csrf_token()}}')" class="col-6">
             <button class="btn btn-primary col-12">Tambahkan semua ke keranjang</button>
-        </div>
+        </form>
     </div>
 </x-_content_container>
+<script>
+  function addToKeranjang(token) {
+      const kode_simulasi = new URLSearchParams(window.location.search).get('kode_simulasi')
+      ajax.onreadystatechange = () => {
+        if(ajax.readyState == ajax.DONE) {
+          showAlert(ajax.status == 200 ? "success" : "danger", ajax.status == 200 ?
+          "Produk berhasil ditambahkan ke keranjang" : "Produk gagal ditambahkan ke keranjang")
+        }
+      }
+      closeAlert()
+      ajax.open("POST", "{{route('user.keranjang.tambah-from-simulasi')}}", true)
+      ajax.setRequestHeader("Content-Type", "application/json")
+      ajax.setRequestHeader("Authorization", `Bearer ${token}`)
+      ajax.send(JSON.stringify({kode_simulasi}))
+  }
+</script>
 @endsection

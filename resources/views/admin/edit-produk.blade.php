@@ -4,12 +4,12 @@
 <x-_modal_two_buttons :id="'delete-modal'" :title="'Hapus produk?'"
     :prompt="'Yakin ingin menghapus '.$produk->nama.'? Tindakan ini tidak dapat dibatalkan setelah dieksekusi.'">
     <x-slot name="button_action">
-        <button onclick="deleteProduk()" type="button" class="btn btn-danger delete-modal-btn">Hapus</button>
+        <button onclick="getToken(deleteProduk, '{{csrf_token()}}')" type="button" class="btn btn-danger delete-modal-btn">Hapus</button>
     </x-slot>
 </x-_modal_two_buttons>
 <x-_content_container :pageTitle="'Edit produk ('.$produk->nama.')'">
     <x-_admin_form_alert />
-    <form action="javascript:editItem()" method="POST">
+    <form action="javascript:getToken(editItem, '{{csrf_token()}}')" method="POST">
         <input type="text" name="id" id="id" style="height: 0; width: 0; visibility: hidden; position: fixed" value="{{$produk->id}}" readonly>
         <x-_admin_produk_form :listKategori='$list_kategori' :listBrand='$list_brand'
         :processorCategoryId='$prosesor_kategori_id' :motherboardCategoryId="$motherboard_kategori_id"
@@ -68,10 +68,11 @@
         }
     };
     
-    function deleteProduk() {
+    function deleteProduk(token) {
         const id = document.getElementById("id").value
         xhr.open("DELETE", "/api/admin/edit-produk", true)
         xhr.setRequestHeader("Content-Type", "application/json")
+        xhr.setRequestHeader("Authorization", `Bearer ${token}`)
         xhr.send(JSON.stringify({id}))
     }
 </script>

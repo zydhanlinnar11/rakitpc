@@ -4,7 +4,7 @@
 <x-_modal_two_buttons :id="'delete-modal'" :title="'Hapus kategori?'"
     :prompt="'Yakin ingin menghapus '.$kategori->nama.'? Tindakan ini tidak dapat dibatalkan setelah dieksekusi.'">
     <x-slot name="button_action">
-        <button onclick="deleteKategori()" type="button" class="btn btn-danger delete-modal-btn">Hapus</button>
+        <button onclick="getToken(deleteKategori, '{{csrf_token()}}')" type="button" class="btn btn-danger delete-modal-btn">Hapus</button>
     </x-slot>
 </x-_modal_two_buttons>
 <x-_content_container :pageTitle="'Edit kategori '.$kategori->nama">
@@ -19,7 +19,7 @@
     </div>   
     @endif
     <x-_admin_form_alert />
-    <form action="javascript:editKategori()" >
+    <form action="javascript:getToken(editKategori, '{{csrf_token()}}')" >
         @csrf
         <input type="text" name="id" id="id" style="height: 0; width: 0; visibility: hidden; position: fixed" value="{{$kategori->id}}" readonly>
         <x-_admin_kategori_form :kategori='$kategori'>
@@ -61,10 +61,11 @@
         }
     };
     
-    function deleteKategori() {
+    function deleteKategori(token) {
         const id = document.getElementById("id").value
         xhr.open("DELETE", "/api/admin/edit-kategori", true)
         xhr.setRequestHeader("Content-Type", "application/json")
+        xhr.setRequestHeader("Authorization", `Bearer ${token}`)
         xhr.send(JSON.stringify({id}))
     }
 </script>

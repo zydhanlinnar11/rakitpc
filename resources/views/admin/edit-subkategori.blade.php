@@ -4,7 +4,7 @@
 <x-_modal_two_buttons :id="'delete-modal'" :title="'Hapus subkategori?'"
     :prompt="'Yakin ingin menghapus '.$subkategori->nama.'? Tindakan ini tidak dapat dibatalkan setelah dieksekusi.'">
     <x-slot name="button_action">
-        <button onclick="deleteSubkategori()" type="button" class="btn btn-danger delete-modal-btn">Hapus</button>
+        <button onclick="getToken(deleteSubkategori, '{{csrf_token()}}')" type="button" class="btn btn-danger delete-modal-btn">Hapus</button>
     </x-slot>
 </x-_modal_two_buttons>
 <x-_content_container :pageTitle="'Edit subkategori '.$subkategori->nama">
@@ -14,7 +14,7 @@
     </div>   
     @endif
     <x-_admin_form_alert />
-    <form action="javascript:editSubkategori()" >
+    <form action="javascript:getToken(editSubkategori, '{{csrf_token()}}')" >
         @csrf
         <x-_admin_subkategori_form :subkategori='$subkategori'
             :listKategori='$list_kategori'>
@@ -55,14 +55,15 @@
         }
     };
     
-    function deleteSubkategori() {
+    function deleteSubkategori(token) {
         const id = (new URLSearchParams(window.location.search)).get('id')
         xhr.open("DELETE", "/api/admin/edit-subkategori", true)
         xhr.setRequestHeader("Content-Type", "application/json")
+        xhr.setRequestHeader("Authorization", `Bearer ${token}`)
         xhr.send(JSON.stringify({id}))
     }
 
-    function editSubkategori() {
+    function editSubkategori(token) {
         const id = (new URLSearchParams(window.location.search)).get('id')
         const nama = document.getElementById("nama").value;
         const idKategori = document.getElementById("kategori").value;
@@ -72,6 +73,7 @@
 
         closeAlert();
         ajax.setRequestHeader("Content-Type", "application/json");
+        ajax.setRequestHeader("Authorization", `Bearer ${token}`)
         ajax.send(JSON.stringify({ id, nama, idKategori, deskripsi }));
     }
 </script>

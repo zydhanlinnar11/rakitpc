@@ -3,7 +3,7 @@
 @section('main-content')
 <x-_content_container :pageTitle="'Tambah socket'">
     <x-_admin_form_alert />
-    <form action="javascript:tambahSocket()" method="POST">
+    <form action="javascript:getToken(tambahSocket, '{{csrf_token()}}')" method="POST">
         @csrf
         <x-_admin_socket_form :socket='null'
           :listBrand='$list_brand'>
