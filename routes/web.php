@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\SimulasiController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -42,37 +43,24 @@ Route::get('/simulasi', [SimulasiController::class, 'simulasi'])->name('simulasi
 
 Route::get('/simulasi/preview', [SimulasiController::class, 'preview_simulasi'])->name('simulasi.preview');
 
-Route::get('/admin', [AdminController::class, 'dashboard']);
+Route::name('admin.')->prefix('admin')->middleware(['auth'])->group(function () {
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    $admin_cru_routes = ['produk', 'kategori', 'subkategori', 'brand', 'socket'];
+    foreach ($admin_cru_routes as $route) {
+        Route::get('/daftar-'.$route, [AdminController::class, 'daftar_'.$route])->name('daftar.'.$route);
+        Route::get('/tambah-'.$route, [AdminController::class, 'tambah_'.$route])->name('tambah.'.$route);
+        Route::get('/edit-'.$route, [AdminController::class, 'edit_'.$route])->name('edit.'.$route);
+    }
+});
 
-Route::get('/admin/tambah-produk', [AdminController::class, 'tambah_produk']);
-
-Route::get('/admin/edit-produk', [AdminController::class, 'edit_produk']);
-
-Route::get('/admin/daftar-produk', [AdminController::class, 'daftar_produk']);
-
-Route::get('/admin/tambah-kategori', [AdminController::class, 'tambah_kategori']);
-
-Route::get('/admin/daftar-kategori', [AdminController::class, 'daftar_kategori']);
-
-Route::get('/admin/edit-kategori', [AdminController::class, 'edit_kategori']);
-
-Route::get('/admin/tambah-subkategori', [AdminController::class, 'tambah_subkategori']);
-
-Route::get('/admin/daftar-subkategori', [AdminController::class, 'daftar_subkategori']);
-
-Route::get('/admin/edit-subkategori', [AdminController::class, 'edit_subkategori']);
-
-Route::get('/admin/daftar-brand', [AdminController::class, 'daftar_brand']);
-
-Route::get('/admin/edit-brand', [AdminController::class, 'edit_brand']);
-
-Route::get('/admin/tambah-brand', [AdminController::class, 'tambah_brand']);
-
-Route::get('/admin/tambah-socket', [AdminController::class, 'tambah_socket']);
-
-Route::get('/admin/edit-socket', [AdminController::class, 'edit_socket']);
-
-Route::get('/admin/daftar-socket', [AdminController::class, 'daftar_socket']);
+Route::name('user.')->prefix('user')->middleware(['auth'])->group(function () {
+    Route::get('/', [UserController::class, 'root'])->name('root');
+    Route::get('/profile', [UserController::class, 'show_profile'])->name('profile');
+    $user_get_routes = ['keranjang'];
+    foreach ($user_get_routes as $route) {
+        Route::get('/'.$route, [UserController::class, 'show_'.$route])->name($route);
+    }
+});
 
 Auth::routes();
 
@@ -82,5 +70,3 @@ Route::get('/logout', function(Request $request) {
     $request->session()->regenerateToken();
     return redirect()->intended('/');
 });
-
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

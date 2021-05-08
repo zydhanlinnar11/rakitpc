@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\UserController;
+use App\Models\Cart;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use GpsLab\Component\Base64UID\Base64UID;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -581,73 +584,87 @@ Route::get('/simulasi-kompatibilitas', function(Request $request) {
     return response()->json($data_simulasi[0], 200);
 })->name('api.simulasi.kompatibilitas');
 
-Route::post('/simulasi', function(Request $request) {
-    $uid = Base64UID::generate(11);
-    $slug_barang = ['prosesor', 'motherboard', 'ram', 'hard_disk', 'ssd', 'casing'
-                        , 'graphics_card', 'power-supply', 'keyboard', 'mouse', 'monitor', 'cpu_cooler', 'software'];
-
-    $array_simulasi = [
-        'id_simulasi' => $uid,
-        'kompatibilitas' => $request->input('kompatibilitas') == "true",
-        'id_brand' => $request->input('brandProcessor'),
-        'id_socket' => $request->input('socketProcessor'),
-    ];
-
-    foreach ($slug_barang as $key) {
-        if(array_key_exists($key, $request->input())) {
-            $array_simulasi['id_'.$key] = $request->input($key)['id'];
-            $array_simulasi['jumlah_'.$key] = $request->input($key)['jumlah'];
+Route::name('simulasi.')->prefix('simulasi')->group(function () {
+    Route::post('/', function(Request $request) {
+        $uid = Base64UID::generate(11);
+        $slug_barang = ['prosesor', 'motherboard', 'ram', 'hard_disk', 'ssd', 'casing'
+                            , 'graphics_card', 'power-supply', 'keyboard', 'mouse', 'monitor', 'cpu_cooler', 'software'];
+    
+        $array_simulasi = [
+            'id_simulasi' => $uid,
+            'kompatibilitas' => $request->input('kompatibilitas') == "true",
+            'id_brand' => $request->input('brandProcessor'),
+            'id_socket' => $request->input('socketProcessor'),
+        ];
+    
+        foreach ($slug_barang as $key) {
+            if(array_key_exists($key, $request->input())) {
+                $array_simulasi['id_'.$key] = $request->input($key)['id'];
+                $array_simulasi['jumlah_'.$key] = $request->input($key)['jumlah'];
+            }
         }
-    }
-
-    try {
-        $tabel_data_simulasi = DB::table('data_simulasi');
-        $array_simulasi['created_at'] = DB::raw('now()');
-        $array_simulasi['updated_at'] = DB::raw('now()');
-        $tabel_data_simulasi->upsert($array_simulasi, ['id']);
-    } catch (QueryException $e) {
-        return response()->json(["message" => "Database error."], 500);
-    }
-    return response()->json(["kodeSimulasi" => $uid], 200);
+    
+        try {
+            $tabel_data_simulasi = DB::table('data_simulasi');
+            $array_simulasi['created_at'] = DB::raw('now()');
+            $array_simulasi['updated_at'] = DB::raw('now()');
+            $tabel_data_simulasi->upsert($array_simulasi, ['id']);
+        } catch (QueryException $e) {
+            return response()->json(["message" => "Database error."], 500);
+        }
+        return response()->json(["kodeSimulasi" => $uid], 200);
+    });
+    
+    Route::patch('/', function(Request $request) {
+        $uid = $request->query('kode_simulasi');
+        $slug_barang = ['prosesor', 'motherboard', 'ram', 'hard_disk', 'ssd', 'casing'
+                            , 'graphics_card', 'power_supply', 'keyboard', 'mouse', 'monitor', 'cpu_cooler', 'software'];
+    
+        $array_simulasi = [
+            'id_simulasi' => $uid,
+            'kompatibilitas' => $request->input('kompatibilitas') == "true",
+            'id_brand' => $request->input('brandProcessor'),
+            'id_socket' => $request->input('socketProcessor'),
+        ];
+    
+        $update_column = ['kompatibilitas', 'id_brand', 'id_socket', 'updated_at']; 
+    
+        foreach ($slug_barang as $key) {
+            if(array_key_exists($key, $request->input())) {
+                array_push($update_column, 'id_'.$key);
+                array_push($update_column, 'jumlah_'.$key);
+                $array_simulasi['id_'.$key] = $request->input($key)['id'];
+                $array_simulasi['jumlah_'.$key] = $request->input($key)['jumlah'];
+            } else {
+                array_push($update_column, 'id_'.$key);
+                array_push($update_column, 'jumlah_'.$key);
+                $array_simulasi['id_'.$key] = null;
+                $array_simulasi['jumlah_'.$key] = null;
+            }
+        }
+    
+        try {
+            $tabel_data_simulasi = DB::table('data_simulasi');
+            $array_simulasi['updated_at'] = DB::raw('now()');
+            $tabel_data_simulasi->upsert($array_simulasi, ['id'], $update_column);
+        } catch (QueryException $e) {
+            return response()->json(["message" => "Database error."], 500);
+        }
+        return response()->json(["kodeSimulasi" => $uid], 200);
+    });
 });
 
-Route::patch('/simulasi', function(Request $request) {
-    $uid = $request->query('kode_simulasi');
-    $slug_barang = ['prosesor', 'motherboard', 'ram', 'hard_disk', 'ssd', 'casing'
-                        , 'graphics_card', 'power_supply', 'keyboard', 'mouse', 'monitor', 'cpu_cooler', 'software'];
 
-    $array_simulasi = [
-        'id_simulasi' => $uid,
-        'kompatibilitas' => $request->input('kompatibilitas') == "true",
-        'id_brand' => $request->input('brandProcessor'),
-        'id_socket' => $request->input('socketProcessor'),
-    ];
-
-    $update_column = ['kompatibilitas', 'id_brand', 'id_socket', 'updated_at']; 
-
-    foreach ($slug_barang as $key) {
-        if(array_key_exists($key, $request->input())) {
-            array_push($update_column, 'id_'.$key);
-            array_push($update_column, 'jumlah_'.$key);
-            $array_simulasi['id_'.$key] = $request->input($key)['id'];
-            $array_simulasi['jumlah_'.$key] = $request->input($key)['jumlah'];
-        } else {
-            array_push($update_column, 'id_'.$key);
-            array_push($update_column, 'jumlah_'.$key);
-            $array_simulasi['id_'.$key] = null;
-            $array_simulasi['jumlah_'.$key] = null;
-        }
-    }
-
-    try {
-        $tabel_data_simulasi = DB::table('data_simulasi');
-        $array_simulasi['updated_at'] = DB::raw('now()');
-        $tabel_data_simulasi->upsert($array_simulasi, ['id'], $update_column);
-    } catch (QueryException $e) {
-        return response()->json(["message" => "Database error."], 500);
-    }
-    return response()->json(["kodeSimulasi" => $uid], 200);
+Route::name('user.')->prefix('user')->group(function () {
+    Route::name('keranjang.')->prefix('keranjang')->group(function () {
+        Route::post('/tambah', [UserController::class, 'tambah'])->name('tambah');
+        Route::post('/tambah-from-simulasi', [UserController::class, 'tambah_from_simulasi'])->name('tambah-from-simulasi');
+        Route::delete('/kurangi', [UserController::class, 'kurangi'])->name('kurangi-satu');
+        Route::delete('/hapus', [UserController::class, 'hapus'])->name('hapus-satu');
+    });
 });
+
+// Route::patch(/)
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

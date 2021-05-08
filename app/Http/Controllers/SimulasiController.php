@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\DB;
 class SimulasiController extends Controller
 {
     //
+    public static $slug_nama_barang = ['prosesor' => 'Prosesor', 'motherboard' => 'Motherboard', 'ram' => 'Memory RAM', 'hard_disk' => 'Hard disk', 'ssd' => 'SSD', 'casing' => 'Casing'
+    ,'graphics_card' => "Graphics card" , 'power_supply' => 'Power Supply', 'keyboard' => 'Keyboard', 'mouse' => 'Mouse',
+    'monitor' => 'Monitor', 'cpu_cooler' => 'CPU Cooler', 'software' => 'Software'];
+
+    public $slug_nama_barang_non_static = ['prosesor' => 'Prosesor', 'motherboard' => 'Motherboard', 'ram' => 'Memory RAM', 'hard_disk' => 'Hard disk', 'ssd' => 'SSD', 'casing' => 'Casing'
+    ,'graphics_card' => "Graphics card" , 'power_supply' => 'Power Supply', 'keyboard' => 'Keyboard', 'mouse' => 'Mouse',
+    'monitor' => 'Monitor', 'cpu_cooler' => 'CPU Cooler', 'software' => 'Software'];
 
     public function simulasi(Request $request) {
         $edit_kode_simulasi = $request->query('kode_simulasi');
@@ -33,9 +40,6 @@ class SimulasiController extends Controller
     }
 
     public function preview_simulasi(Request $request) {
-        $slug_nama_barang = ['prosesor' => 'Prosesor', 'motherboard' => 'Motherboard', 'ram' => 'Memory RAM', 'hard_disk' => 'Hard disk', 'ssd' => 'SSD', 'casing' => 'Casing'
-                        ,'graphics_card' => "Graphics card" , 'power_supply' => 'Power Supply', 'keyboard' => 'Keyboard', 'mouse' => 'Mouse',
-                        'monitor' => 'Monitor', 'cpu_cooler' => 'CPU Cooler', 'software' => 'Software'];
         $kode_simulasi = $request->query('kode_simulasi');
         $array_simulasi = [];
         $total_harga = 0;
@@ -48,7 +52,7 @@ class SimulasiController extends Controller
             $kompatibilitas = $tabel_data_simulasi[0]->kompatibilitas;
             $created_at = $tabel_data_simulasi[0]->created_at;
             $updated_at = $tabel_data_simulasi[0]->updated_at;
-            foreach($slug_nama_barang as $key => $value) {
+            foreach($this->slug_nama_barang_non_static as $key => $value) {
                 $id_item = $tabel_data_simulasi[0]->{'id_'.$key};
                 $jumlah_item = $tabel_data_simulasi[0]->{'jumlah_'.$key};
                 $items = $tabel_item->where('id', '=', $id_item);
