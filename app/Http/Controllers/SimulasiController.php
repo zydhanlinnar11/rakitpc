@@ -47,7 +47,7 @@ class SimulasiController extends Controller
         try {
             $tabel_data_simulasi = DB::table('data_simulasi')->where('id_simulasi', '=', $kode_simulasi)->get();
             if($tabel_data_simulasi->count() != 1)
-                return response()->json(["message" => "Kode simulasi tidak valid."], 500);
+                return redirect(route('simulasi'));
             $tabel_item = DB::table('items')->select(['id', 'nama', 'harga', 'url_gambar'])->get();
             $kompatibilitas = $tabel_data_simulasi[0]->kompatibilitas;
             $created_at = $tabel_data_simulasi[0]->created_at;

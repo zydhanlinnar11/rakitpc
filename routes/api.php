@@ -658,10 +658,10 @@ Route::name('simulasi.')->prefix('simulasi')->group(function () {
 
 Route::middleware('auth:sanctum')->name('user.')->prefix('user')->group(function () {
     Route::name('keranjang.')->prefix('keranjang')->group(function () {
-        Route::post('/tambah', [UserController::class, 'tambah'])->name('tambah');
+        Route::patch('/tambah', [UserController::class, 'tambah'])->name('tambah');
         Route::post('/tambah-from-simulasi', [UserController::class, 'tambah_from_simulasi'])->name('tambah-from-simulasi');
-        Route::delete('/kurangi', [UserController::class, 'kurangi'])->name('kurangi-satu');
-        Route::delete('/hapus', [UserController::class, 'hapus'])->name('hapus-satu');
+        Route::patch('/kurangi', [UserController::class, 'kurangi'])->name('kurangi');
+        Route::delete('/hapus', [UserController::class, 'hapus'])->name('hapus');
     });
 });
 

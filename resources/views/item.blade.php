@@ -2,7 +2,6 @@
 
 @section('main-content')
 <x-_content_container :pageTitle='$item->nama'>
-  <x-_admin_form_alert />
   <div class="row mb-3">
     <div class="col-xl-6 text-center">
         <img src="{{$item->url_gambar}}" class="img-fluid" alt="Gambar dari {{$item->nama}}" style="max-height: 350px">
@@ -52,12 +51,32 @@
           </tr>
         </tbody>
       </table>
-      <form action="javascript:getToken(addToKeranjang, '{{csrf_token()}}')">
-        <input type="text" name="id_produk" id="id" value="{{$item->id}}" hidden>
-        <button type="submit" class="btn btn-primary">Tambahkan ke keranjang</button>
-      </form>
+      @if (Auth::check())
+      <div>
+        <h6>Stok di keranjang : <span id="jumlah-di-keranjang" data-jumlah="{{$number_in_cart}}">{{$number_in_cart}}</span></h6>
+        <div class="row">
+          <form class="col-4" action="javascript:getToken(kurangiFromKeranjang, '{{csrf_token()}}')">
+            <input type="text" name="id_produk" id="id" value="{{$item->id}}" hidden>
+            <button type="submit" class="btn btn-warning col-12">Kurangi</button>
+          </form>
+          <form class="col-4" action="javascript:getToken(hapusFromKeranjang, '{{csrf_token()}}')">
+            <input type="text" name="id_produk" id="id" value="{{$item->id}}" hidden>
+            <button type="submit" class="btn btn-danger col-12">Hapus</button>
+          </form>
+          <form class="col-4" action="javascript:getToken(addToKeranjang, '{{csrf_token()}}')">
+            <input type="text" name="id_produk" id="id" value="{{$item->id}}" hidden>
+            <button type="submit" class="btn btn-primary col-12">Tambah</button>
+          </form>
+        </div>
+      </div>
+      @else
+      <div>
+        <h6>Silahkan <a href="{{route('login')}}">Login</a> atau <a href="{{route('register')}}">Daftar</a> untuk menambahkan ke keranjang.</h6>
+      </div>
+      @endif
     </div>
   </div>
+  <x-_admin_form_alert />
 
   <hr>
 
@@ -77,12 +96,54 @@
           showAlert(ajax.status == 200 ? "success" : "danger", ajax.status == 200 ?
           "Produk berhasil ditambahkan ke keranjang" : "Produk gagal ditambahkan ke keranjang")
         }
+        if(ajax.readyState == ajax.DONE && ajax.status == 200) {
+          document.getElementById('jumlah-di-keranjang').dataset.jumlah++
+          document.getElementById('jumlah-di-keranjang').innerText = document.getElementById('jumlah-di-keranjang').dataset.jumlah
+        }
       }
       closeAlert()
-      ajax.open("POST", "{{route('user.keranjang.tambah')}}", true)
+      ajax.open("PATCH", "{{route('user.keranjang.tambah')}}", true)
       ajax.setRequestHeader("Content-Type", "application/json")
       ajax.setRequestHeader("Authorization", `Bearer ${token}`)
       ajax.send(JSON.stringify({id_produk}))
   }
+
+  function kurangiFromKeranjang(token) {
+      const id_produk = document.getElementById("id").value
+      ajax.onreadystatechange = () => {
+        if(ajax.readyState == ajax.DONE) {
+          showAlert(ajax.status == 200 ? "success" : "danger", ajax.status == 200 ?
+          "Produk berhasil dikurangi dari keranjang" : "Produk gagal dikurangi dari keranjang")
+        }
+        if(ajax.readyState == ajax.DONE && ajax.status == 200) {
+          document.getElementById('jumlah-di-keranjang').dataset.jumlah--
+          document.getElementById('jumlah-di-keranjang').innerText = document.getElementById('jumlah-di-keranjang').dataset.jumlah
+        }
+      }
+      closeAlert()
+      ajax.open("PATCH", "{{route('user.keranjang.kurangi')}}", true)
+      ajax.setRequestHeader("Content-Type", "application/json")
+      ajax.setRequestHeader("Authorization", `Bearer ${token}`)
+      ajax.send(JSON.stringify({id_produk}))
+  }
+
+function hapusFromKeranjang(token) {
+    const id_produk = document.getElementById("id").value
+    ajax.onreadystatechange = () => {
+      if(ajax.readyState == ajax.DONE) {
+        showAlert(ajax.status == 200 ? "success" : "danger", ajax.status == 200 ?
+        "Produk berhasil dihapus dari keranjang" : "Produk gagal dihapus dari keranjang")
+      }
+      if(ajax.readyState == ajax.DONE && ajax.status == 200) {
+        document.getElementById('jumlah-di-keranjang').dataset.jumlah = 0
+        document.getElementById('jumlah-di-keranjang').innerText = document.getElementById('jumlah-di-keranjang').dataset.jumlah
+      }
+    }
+    closeAlert()
+    ajax.open("DELETE", "{{route('user.keranjang.hapus')}}", true)
+    ajax.setRequestHeader("Content-Type", "application/json")
+    ajax.setRequestHeader("Authorization", `Bearer ${token}`)
+    ajax.send(JSON.stringify({id_produk}))
+}
 </script>
 @endsection

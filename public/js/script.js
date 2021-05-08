@@ -219,6 +219,12 @@ function getToken(callback, csrf_token) {
     const xhrForToken = new XMLHttpRequest();
     xhrForToken.onreadystatechange = () => {
         if (
+            xhrForToken.responseURL == "http://rakitpc.zydhan.xyz/login" ||
+            xhrForToken.responseURL == "https://rakitpc.zydhan.xyz/login" ||
+            xhrForToken.responseURL == "/login"
+        )
+            window.open(xhrForToken.responseURL, "_self");
+        if (
             xhrForToken.readyState == xhrForToken.DONE &&
             typeof callback == "function"
         )

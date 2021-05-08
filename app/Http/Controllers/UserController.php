@@ -27,9 +27,15 @@ class UserController extends Controller
         try {
             $keranjang = Cart::where('id', '=', $user['id'])->first()['data'];
             $list = [];
+            $jumlah_total_produk = 0;
+            if($keranjang == NULL) {
+                $checkoutable = false;
+                return view('user.keranjang', compact('list', 'checkoutable'));
+            }
             foreach ($keranjang as $key => $value) {
                 $produk = item::find($key);
                 $kategori = kategori::find($produk['id_kategori']);
+                $jumlah_total_produk = $value;
                 array_push($list, [
                     'id' => $produk['id'],
                     'url_gambar' => $produk['url_gambar'],
@@ -40,7 +46,8 @@ class UserController extends Controller
                 ]);
             }
             // return $list;
-            return view('user.keranjang', compact('list'));
+            $checkoutable = $jumlah_total_produk > 0;
+            return view('user.keranjang', compact('list', 'checkoutable'));
         } catch (Exception $e) {
             dd($e);
         }
@@ -112,7 +119,7 @@ class UserController extends Controller
             $cart_data = $cart['data'];
             if($cart_data == NULL || !array_key_exists($id_item, $cart_data))
                 return response()->json([], 400);
-            array_splice($cart_data, $id_item, 1);
+            unset($cart_data[$id_item]);
             if(count($cart_data) == 0)
                 $cart_data = NULL;
             $cart['data'] = $cart_data;

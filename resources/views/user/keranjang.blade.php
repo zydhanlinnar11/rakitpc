@@ -2,6 +2,11 @@
 
 @section('main-content')
 <x-_content_container :pageTitle="'Keranjang'">
+  @if (!$checkoutable)
+  <div class="alert alert-warning" role="alert">
+    Tidak ada produk yang dibeli! Tidak dapat melakukan checkout
+  </div>
+  @endif
     <table class="table">
         <thead>
           <tr>
@@ -11,6 +16,7 @@
             <th scope="col">Harga Satuan</th>
             <th scope="col">Jumlah Barang</th>
             <th scope="col">Subtotal Harga</th>
+            <th scope="col">Ubah</th>
           </tr>
         </thead>
         <tbody>
@@ -22,6 +28,7 @@
             <td>Rp {{number_format($item['harga'], 2)}}</td>
             <td>{{$item['jumlah']}}</td>
             <td>Rp {{number_format($item['harga'] * $item['jumlah'], 2)}}</td>
+            <td><button class="btn btn-info" onclick="window.open('{{route('item.view')}}?item_id={{$item['id']}}', '_self')">Ubah</button></td>
           </tr>
           @endforeach
         </tbody>
@@ -30,12 +37,12 @@
         <h6>Total harga : Rp {{number_format($total_harga, 2)}}</h6>
     </div> --}}
     <div class="row mb-3">
-        <div class="col-6">
-            <button onclick="window.open(`{{route('simulasi')}}?kode_simulasi=${new URLSearchParams(window.location.search).get('kode_simulasi')}`, '_self')"
-                class="btn btn-secondary col-12">Ubah</button>
-        </div>
-        <div class="col-6">
-            <button class="btn btn-primary col-12">Checkout</button>
+        <div class="col-12">
+            <button class="btn btn-primary col-12"
+            @if (!$checkoutable)
+                disabled
+            @endif
+            >Checkout</button>
         </div>
     </div>
 </x-_content_container>

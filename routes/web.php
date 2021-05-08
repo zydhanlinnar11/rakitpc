@@ -53,9 +53,9 @@ Route::name('admin.')->prefix('admin')->middleware(['auth'])->group(function () 
     }
 });
 
-Route::name('user.')->prefix('user')->group(function () {
-    Route::middleware(['auth'])->get('/', [UserController::class, 'root'])->name('root');
-    Route::middleware(['auth'])->get('/profile', [UserController::class, 'show_profile'])->name('profile');
+Route::middleware(['auth'])->name('user.')->prefix('user')->group(function () {
+    Route::get('/', [UserController::class, 'root'])->name('root');
+    Route::get('/profile', [UserController::class, 'show_profile'])->name('profile');
     $user_get_routes = ['keranjang'];
     foreach ($user_get_routes as $route) {
         Route::get('/'.$route, [UserController::class, 'show_'.$route])->name($route);
