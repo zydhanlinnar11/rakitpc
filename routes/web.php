@@ -55,11 +55,19 @@ Route::name('admin.')->prefix('admin')->middleware(['auth'])->group(function () 
 
 Route::middleware(['auth'])->name('user.')->prefix('user')->group(function () {
     Route::get('/', [UserController::class, 'root'])->name('root');
-    Route::get('/profile', [UserController::class, 'show_profile'])->name('profile');
-    $user_get_routes = ['keranjang'];
+
+    $user_get_routes = ['keranjang', 'profile'];
     foreach ($user_get_routes as $route) {
         Route::get('/'.$route, [UserController::class, 'show_'.$route])->name($route);
     }
+
+    Route::middleware(['auth'])->name('transaksi.')->prefix('transaksi')->group(function() {
+        Route::get('/sukses', [UserController::class, 'show_transaksi_sukses'])->name('sukses');
+        Route::get('/view', [UserController::class, 'show_transaksi'])->name('view');
+        Route::get('/', [UserController::class, 'show_all_transaksi'])->name('all');
+    });
+
+    Route::get('/edit-profile', [UserController::class, 'edit_profile'])->name('edit-profile');
 
     Route::post('/tokens/create', function (Request $request) {
         $token = $request->user()->createToken('web-api-token');

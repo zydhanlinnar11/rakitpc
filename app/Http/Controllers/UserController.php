@@ -6,10 +6,13 @@ use App\Models\Cart;
 use App\Models\data_simulasi;
 use App\Models\item;
 use App\Models\kategori;
+use App\Models\PaymentProcessor;
+use App\Models\PaymentRequest;
+use App\Models\Transaction;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -19,7 +22,29 @@ class UserController extends Controller
     }
 
     public function show_profile() {
-        // 
+        $user = Auth::user();
+        return view('user.profile', compact('user'));
+    }
+
+    public function edit_profile() {
+        $user = Auth::user();
+        return view('user.edit-profile', compact('user'));
+    }
+
+    public function patch_edit_profile(Request $request) {
+        try {
+            $user = User::find($request->user()['id']);
+            if($user == NULL) {
+                return response()->json(['message' => 'Gagal memperbarui user'], 400);
+            }
+            $user['name'] = $request->input('name');
+            $user['email'] = $request->input('email');
+            $user['no_telp'] = $request->input('no_telp');
+            $user->save();
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Gagal memperbarui user'], 500);
+        }
+        return response()->json(['message' => 'Berhasil memperbarui user']);
     }
 
     public function show_keranjang(Request $request) {
@@ -28,12 +53,15 @@ class UserController extends Controller
             $keranjang = Cart::where('id', '=', $user['id'])->first()['data'];
             $list = [];
             $jumlah_total_produk = 0;
+            $jumlah_total_harga = 0;
+            $is_stok_enough = true;
             if($keranjang == NULL) {
                 $checkoutable = false;
-                return view('user.keranjang', compact('list', 'checkoutable'));
+                return view('user.keranjang', compact('jumlah_total_harga', 'list', 'checkoutable', 'is_stok_enough', 'jumlah_total_produk'));
             }
             foreach ($keranjang as $key => $value) {
                 $produk = item::find($key);
+                if($produk == NULL) continue;
                 $kategori = kategori::find($produk['id_kategori']);
                 $jumlah_total_produk = $value;
                 array_push($list, [
@@ -42,12 +70,15 @@ class UserController extends Controller
                     'kategori' => $kategori['nama'],
                     'nama' => $produk['nama'],
                     'harga' => $produk['harga'],
-                    'jumlah' => $value
+                    'jumlah' => $value,
+                    'is_stok_enough' => $produk['stok'] >= $value
                 ]);
+                $is_stok_enough &= $produk['stok'] >= $value;
+                $jumlah_total_harga += $produk['harga'] * $value;
             }
             // return $list;
-            $checkoutable = $jumlah_total_produk > 0;
-            return view('user.keranjang', compact('list', 'checkoutable'));
+            $checkoutable = $jumlah_total_produk > 0 && $is_stok_enough;
+            return view('user.keranjang', compact('jumlah_total_harga', 'list', 'checkoutable', 'is_stok_enough', 'jumlah_total_produk'));
         } catch (Exception $e) {
             dd($e);
         }
@@ -134,5 +165,76 @@ class UserController extends Controller
         $id_item = $request->id_produk;
         if($id_item == NULL) return response()->json([], 400);
         return $this->hapus_item_from_keranjang($request, $id_item);
+    }
+
+    public function transaksi_baru(Request $request) {
+        try {
+            $data = $request->input();
+            $transaksi = new Transaction();
+            $payment_processor = PaymentProcessor::find($data['paymentId']);
+            $payment_handler = new PaymentController();
+            $transaksi['id_user'] = $request->user()['id'];
+            $transaksi['done'] = false;
+            $transaksi['data'] = $data['data'];
+            $transaksi->save();
+            $transaksi = Transaction::orderBy('created_at', 'desc')->first();
+
+            $transaksi['id_payment_request'] = $payment_handler->createPayment($payment_processor, $request->user(), $transaksi);
+            $transaksi->save();
+            
+            foreach ($transaksi['data'] as $produk) {
+                foreach ($produk as $id => $jumlah) {
+                    $item = item::find($id);
+                    if($item == NULL) continue;
+                    $this->hapus_item_from_keranjang($request, $id);
+                }
+            }
+
+            return response()->json(['redirectURL' => route('user.transaksi.sukses').'?id='.$transaksi['id_transaksi']]);
+        } catch (Exception $e) {
+            dd($e);
+        }
+    }
+
+    public function show_transaksi_sukses(Request $request) {
+        if($request->query('id') == NULL) return redirect('/');
+        try {
+            $transaksi = Transaction::where('id_transaksi', $request->query('id'))->first();
+            return view('user.transaksi.sukses', compact('transaksi'));
+        } catch (Exception $e) {
+            dd($e);
+        }
+    }
+
+    public function show_transaksi(Request $request) {
+        if($request->query('id') == NULL) return redirect('/');
+        try {
+            $transaksi = Transaction::where('id_transaksi', $request->query('id'))->first();
+            $list = [];
+            foreach ($transaksi['data'] as $produk) {
+                foreach ($produk as $id => $jumlah) {
+                    $item = item::find($id);
+                    if($item == NULL) continue;
+                    $item['jumlah'] = $jumlah;
+                    $item['kategori'] = kategori::find($item['id_kategori'])['nama'];
+                    array_push($list, $item);
+                }
+            }
+            $payment_request = PaymentRequest::find($transaksi['id_payment_request']);
+            $payment_processor = PaymentProcessor::find($payment_request['id_payment_processor']);
+            return view('user.transaksi.view', compact('transaksi', 'payment_processor', 'list'));
+        } catch (Exception $e) {
+            dd($e);
+        }
+    }
+    
+    public function show_all_transaksi(Request $request) {
+        try {
+            $id_user = $request->user()['id'];
+            $transaksi = Transaction::where('id_user', $id_user)->get();
+            return view('user.transaksi.all', compact('transaksi'));
+        } catch (Exception $e) {
+            dd($e);
+        }
     }
 }

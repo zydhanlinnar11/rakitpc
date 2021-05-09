@@ -53,19 +53,31 @@
       </table>
       @if (Auth::check())
       <div>
-        <h6>Stok di keranjang : <span id="jumlah-di-keranjang" data-jumlah="{{$number_in_cart}}">{{$number_in_cart}}</span></h6>
+        <h6>Stok di keranjang : <span id="jumlah-di-keranjang" data-jumlah="{{$number_in_cart}}" data-maks="{{$item->stok}}">{{$number_in_cart}}</span></h6>
         <div class="row">
           <form class="col-4" action="javascript:getToken(kurangiFromKeranjang, '{{csrf_token()}}')">
             <input type="text" name="id_produk" id="id" value="{{$item->id}}" hidden>
-            <button type="submit" class="btn btn-warning col-12">Kurangi</button>
+            <button id="kurangi-button" type="submit" class="btn btn-warning col-12"
+            @if ($number_in_cart == 0)
+                disabled
+            @endif
+            >Kurangi</button>
           </form>
           <form class="col-4" action="javascript:getToken(hapusFromKeranjang, '{{csrf_token()}}')">
             <input type="text" name="id_produk" id="id" value="{{$item->id}}" hidden>
-            <button type="submit" class="btn btn-danger col-12">Hapus</button>
+            <button id="hapus-button" type="submit" class="btn btn-danger col-12"
+            @if ($number_in_cart == 0)
+              disabled
+            @endif
+            >Hapus</button>
           </form>
           <form class="col-4" action="javascript:getToken(addToKeranjang, '{{csrf_token()}}')">
             <input type="text" name="id_produk" id="id" value="{{$item->id}}" hidden>
-            <button type="submit" class="btn btn-primary col-12">Tambah</button>
+            <button id="tambah-button" type="submit" class="btn btn-primary col-12"
+            @if ($number_in_cart >= $item->stok)
+                disabled
+            @endif
+            >Tambah</button>
           </form>
         </div>
       </div>
@@ -97,8 +109,14 @@
           "Produk berhasil ditambahkan ke keranjang" : "Produk gagal ditambahkan ke keranjang")
         }
         if(ajax.readyState == ajax.DONE && ajax.status == 200) {
+          document.getElementById('hapus-button').disabled = false
+          document.getElementById('kurangi-button').disabled = false
           document.getElementById('jumlah-di-keranjang').dataset.jumlah++
           document.getElementById('jumlah-di-keranjang').innerText = document.getElementById('jumlah-di-keranjang').dataset.jumlah
+        }
+        if(document.getElementById('jumlah-di-keranjang').dataset.jumlah >=
+          document.getElementById('jumlah-di-keranjang').dataset.maks) {
+          document.getElementById('tambah-button').disabled = true
         }
       }
       closeAlert()
@@ -119,6 +137,14 @@
           document.getElementById('jumlah-di-keranjang').dataset.jumlah--
           document.getElementById('jumlah-di-keranjang').innerText = document.getElementById('jumlah-di-keranjang').dataset.jumlah
         }
+        if(document.getElementById('jumlah-di-keranjang').dataset.jumlah == 0) {
+          document.getElementById('hapus-button').disabled = true
+          document.getElementById('kurangi-button').disabled = true
+        }
+        if(document.getElementById('jumlah-di-keranjang').dataset.jumlah >=
+          document.getElementById('jumlah-di-keranjang').dataset.maks) {
+          document.getElementById('tambah-button').disabled = false
+        }
       }
       closeAlert()
       ajax.open("PATCH", "{{route('user.keranjang.kurangi')}}", true)
@@ -127,23 +153,31 @@
       ajax.send(JSON.stringify({id_produk}))
   }
 
-function hapusFromKeranjang(token) {
-    const id_produk = document.getElementById("id").value
-    ajax.onreadystatechange = () => {
-      if(ajax.readyState == ajax.DONE) {
-        showAlert(ajax.status == 200 ? "success" : "danger", ajax.status == 200 ?
-        "Produk berhasil dihapus dari keranjang" : "Produk gagal dihapus dari keranjang")
+  function hapusFromKeranjang(token) {
+      const id_produk = document.getElementById("id").value
+      ajax.onreadystatechange = () => {
+        if(ajax.readyState == ajax.DONE) {
+          showAlert(ajax.status == 200 ? "success" : "danger", ajax.status == 200 ?
+          "Produk berhasil dihapus dari keranjang" : "Produk gagal dihapus dari keranjang")
+        }
+        if(ajax.readyState == ajax.DONE && ajax.status == 200) {
+          document.getElementById('jumlah-di-keranjang').dataset.jumlah = 0
+          document.getElementById('jumlah-di-keranjang').innerText = document.getElementById('jumlah-di-keranjang').dataset.jumlah
+        }
+        if(document.getElementById('jumlah-di-keranjang').dataset.jumlah == 0) {
+          document.getElementById('hapus-button').disabled = true
+          document.getElementById('kurangi-button').disabled = true
+        }
+        if(document.getElementById('jumlah-di-keranjang').dataset.jumlah >=
+          document.getElementById('jumlah-di-keranjang').dataset.maks) {
+          document.getElementById('tambah-button').disabled = false
+        }
       }
-      if(ajax.readyState == ajax.DONE && ajax.status == 200) {
-        document.getElementById('jumlah-di-keranjang').dataset.jumlah = 0
-        document.getElementById('jumlah-di-keranjang').innerText = document.getElementById('jumlah-di-keranjang').dataset.jumlah
-      }
-    }
-    closeAlert()
-    ajax.open("DELETE", "{{route('user.keranjang.hapus')}}", true)
-    ajax.setRequestHeader("Content-Type", "application/json")
-    ajax.setRequestHeader("Authorization", `Bearer ${token}`)
-    ajax.send(JSON.stringify({id_produk}))
-}
+      closeAlert()
+      ajax.open("DELETE", "{{route('user.keranjang.hapus')}}", true)
+      ajax.setRequestHeader("Content-Type", "application/json")
+      ajax.setRequestHeader("Authorization", `Bearer ${token}`)
+      ajax.send(JSON.stringify({id_produk}))
+  }
 </script>
 @endsection

@@ -1,13 +1,13 @@
 <?php
 
 use App\Http\Controllers\UserController;
-use App\Models\Cart;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use GpsLab\Component\Base64UID\Base64UID;
+use Illuminate\Support\Facades\Gate;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +59,8 @@ Route::get('/kategori', function () {
 
 Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(function() {
     Route::post('/tambah-kategori', function(Request $request) {
+        if(!Gate::allows('access-admin'))
+            abort(403);
         try {
             $nama = $request->nama;
             $slug = Str::slug($nama);
@@ -87,6 +89,8 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
     });
     
     Route::patch('/edit-kategori', function(Request $request) {
+        if(!Gate::allows('access-admin'))
+            abort(403);
         try {
             $nama = $request->nama;
             $slug = Str::slug($nama);
@@ -116,6 +120,8 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
     });
     
     Route::delete('/edit-kategori', function(Request $request) {
+        if(!Gate::allows('access-admin'))
+            abort(403);
         $id = $request->id;
         try {
             $kategori = DB::table('kategoris')->where('id', '=', $id);
@@ -139,6 +145,8 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
     });
     
     Route::post('/tambah-subkategori', function(Request $request) {
+        if(!Gate::allows('access-admin'))
+            abort(403);
         try {
             $nama = $request->nama;
             $slug = Str::slug($nama);
@@ -170,6 +178,8 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
     });
     
     Route::patch('/edit-subkategori', function(Request $request) {
+        if(!Gate::allows('access-admin'))
+            abort(403);
         try {
             $nama = $request->nama;
             $slug = Str::slug($nama);
@@ -203,6 +213,8 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
     });
     
     Route::delete('/edit-subkategori', function(Request $request) {
+        if(!Gate::allows('access-admin'))
+            abort(403);
         $id = $request->id;
         try {
             $subkategori = DB::table('subcategories')->where('id', '=', $id);
@@ -223,6 +235,8 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
     });
     
     Route::post('/tambah-socket', function(Request $request) {
+        if(!Gate::allows('access-admin'))
+            abort(403);
         try {
             $nama = $request->nama;
             $id_brand = $request->idBrand;
@@ -249,6 +263,8 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
     });
     
     Route::patch('/edit-socket', function(Request $request) {
+        if(!Gate::allows('access-admin'))
+            abort(403);
         try {
             $id = $request->id;
             $nama = $request->nama;
@@ -277,6 +293,8 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
     });
     
     Route::delete('/edit-socket', function(Request $request) {
+        if(!Gate::allows('access-admin'))
+            abort(403);
         try {
             $id = $request->id;
             $tabel_socket = DB::table('processor_sockets');
@@ -291,6 +309,8 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
     });
     
     Route::post('/tambah-brand', function(Request $request) {
+        if(!Gate::allows('access-admin'))
+            abort(403);
         try {
             $nama = $request->nama;
             $url_logo = $request->urlLogo;
@@ -317,6 +337,8 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
     });
     
     Route::patch('/edit-brand', function(Request $request) {
+        if(!Gate::allows('access-admin'))
+            abort(403);
         try {
             $id = $request->id;
             $nama = $request->nama;
@@ -345,6 +367,8 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
     });
     
     Route::delete('/edit-brand', function(Request $request) {
+        if(!Gate::allows('access-admin'))
+            abort(403);
         $id = $request->id;
         try {
             $brand = DB::table('brands')->where('id', '=', $id);
@@ -365,6 +389,8 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
     });
     
     Route::post('/tambah-produk', function(Request $request) {
+        if(!Gate::allows('access-admin'))
+            abort(403);
         $nama = $request->nama;
         $berat = $request->berat;
         $harga = $request->harga;
@@ -434,6 +460,8 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
     });
     
     Route::patch('/edit-produk', function(Request $request) {
+        if(!Gate::allows('access-admin'))
+            abort(403);
         $id = $request->id;
         $nama = $request->nama;
         $berat = $request->berat;
@@ -513,6 +541,8 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
     });
     
     Route::delete('/edit-produk', function(Request $request) {
+        if(!Gate::allows('access-admin'))
+            abort(403);
         $id = $request->id;
         try {
             $produk = DB::table('items')->where('id', '=', $id);
@@ -663,6 +693,10 @@ Route::middleware('auth:sanctum')->name('user.')->prefix('user')->group(function
         Route::patch('/kurangi', [UserController::class, 'kurangi'])->name('kurangi');
         Route::delete('/hapus', [UserController::class, 'hapus'])->name('hapus');
     });
+    Route::name('transaksi.')->prefix('transaksi')->group(function () {
+        Route::post('/new', [UserController::class, 'transaksi_baru'])->name('new');
+    });
+    Route::patch('/edit-profile', [UserController::class, 'patch_edit_profile'])->name('patch-edit-profile');
 });
 
 // Route::patch(/)

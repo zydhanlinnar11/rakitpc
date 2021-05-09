@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Transaction;
 use App\Models\User;
+use App\Observers\TransactionObserver;
 use App\Observers\UserObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -31,5 +33,6 @@ class EventServiceProvider extends ServiceProvider
     {
         //
         User::observe(UserObserver::class);
+        Transaction::observe(TransactionObserver::class);
     }
 }
