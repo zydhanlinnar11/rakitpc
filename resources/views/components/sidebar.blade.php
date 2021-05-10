@@ -16,7 +16,7 @@
         <button onclick="window.open('{{route('logout')}}', '_self')" class="side-button" id="side-button-logout">Log out</button>
         @else
         <div class="side-horizontal-divider"></div>
-        <button onclick="window.open('{{route('login')}}', '_self')" class="side-button" id="side-button-login">Login</button>
+        <button onclick="window.open('{{route('auth.google.redirect')}}', '_self')" class="side-button" id="side-button-login">Login</button>
         @endif
     </div>
 </div>

@@ -10,6 +10,10 @@ class Transaction extends Model
     use HasFactory;
 
     protected $casts = ['data' => 'array'];
+    
+    protected $attributes = [
+        'done' => false,
+    ];
 
     public function payment_request() {
         return $this->belongsTo(PaymentRequest::class, 'id_payment_request', 'id');

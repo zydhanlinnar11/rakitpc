@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,7 +77,15 @@ Route::middleware(['auth'])->name('user.')->prefix('user')->group(function () {
     });
 });
 
-Auth::routes();
+Route::get('/auth/google/redirect', function () {
+    return Socialite::driver('google')->redirect();
+})->name('auth.google.redirect');
+
+Route::get('/auth/google/callback', [UserController::class, 'login_with_google'])->name('auth.login.google');
+
+Route::get('/auth/logout', [UserController::class, 'logout'])->name('logout');
+
+// Auth::routes();
 
 Route::get('/logout', function(Request $request) {
     Auth::logout();

@@ -10,9 +10,13 @@ use App\Models\PaymentProcessor;
 use App\Models\PaymentRequest;
 use App\Models\Transaction;
 use App\Models\User;
+use DateTimeZone;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
+use Laravel\Ui\Presets\React;
 
 class UserController extends Controller
 {
@@ -237,5 +241,34 @@ class UserController extends Controller
         } catch (Exception $e) {
             dd($e);
         }
+    }
+
+    function login_with_google(Request $request) {
+        $user = Socialite::driver('google')->user();
+
+        $user_on_db = User::where('email', $user->getEmail())->first();
+        if($user_on_db == null) {
+            $user_on_db = new User();
+            $user_on_db['email'] = $user->getEmail();
+            $user_on_db['password'] = Hash::make($user->getId());
+        }
+        $user_on_db['avatar_url'] = $user->getAvatar();
+        $user_on_db['name'] = $user->getName();
+        if(!isset($user_on_db['email_verified_at']) || $user_on_db['email_verified_at'] == NULL)
+            $user_on_db['email_verified_at'] = now(new DateTimeZone('Asia/Jakarta'));
+        $user_on_db->save();
+        Auth::login($user_on_db, true);
+        $request->session()->regenerate();
+        return redirect()->intended();
+    }
+
+    function logout(Request $request) {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
 }
