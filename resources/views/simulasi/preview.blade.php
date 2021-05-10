@@ -46,6 +46,7 @@
             @if (Auth::check())
             <button class="btn btn-primary col-12">Tambahkan semua ke keranjang</button>
             @else
+            {{Session::put('url.intended', URL::full())}}
             <a href="{{route('auth.google.redirect')}}" class="btn btn-primary col-12">Login untuk menambahkan ke keranjang</a>
             @endif
         </form>
