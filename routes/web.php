@@ -81,6 +81,10 @@ Route::get('/auth/google/redirect', function () {
     return Socialite::driver('google')->redirect();
 })->name('auth.google.redirect');
 
+Route::get('/login', function(){
+    return redirect(route('auth.google.redirect'));
+})->name('login');
+
 Route::get('/auth/google/callback', [UserController::class, 'login_with_google'])->name('auth.login.google');
 
 Route::get('/auth/logout', [UserController::class, 'logout'])->name('logout');

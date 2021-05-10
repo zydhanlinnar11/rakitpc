@@ -43,7 +43,11 @@
                 class="btn btn-secondary col-12">Ubah</button>
         </div>
         <form action="javascript:getToken(addToKeranjang, '{{csrf_token()}}')" class="col-6">
+            @if (Auth::check())
             <button class="btn btn-primary col-12">Tambahkan semua ke keranjang</button>
+            @else
+            <a href="{{route('auth.google.redirect')}}" class="btn btn-primary col-12">Login untuk menambahkan ke keranjang</a>
+            @endif
         </form>
     </div>
 </x-_content_container>
