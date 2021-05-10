@@ -73,41 +73,41 @@
             </div>
         </div>
         <h6>Komponen utama:</h6>
-        <div class="row mb-3" id="bagian-prosesor">
-            <div class="col-9">
-                <div class="input-group">
+        <div class="row" id="bagian-prosesor">
+            <div class="col-lg-9">
+                <div class="input-group mb-lg-3 mb-1">
                     <span class="input-group-text">Prosesor:</span>
                     <select id="prosesor" class="form-select" onchange="setHarga('prosesor')">
                         <option value="" data-harga="0">Pilih prosesor</option>
                     </select>
                 </div>
             </div>
-            <div class="col-1">
-                <input type="number" class="form-control" name="jumlah-prosesor" id="jumlah-prosesor" min="0" value="1" onchange="setHarga('prosesor')">
+            <div class="col-lg-1">
+                <input type="number" class="form-control mb-lg-3 mb-1" name="jumlah-prosesor" id="jumlah-prosesor" min="0" value="1" onchange="setHarga('prosesor')">
             </div>
-            <div class="col-2">
-                <input type="text" class="form-control" name="harga-prosesor" id="harga-prosesor" value="Rp 0,00" readonly>
+            <div class="col-lg-2">
+                <input type="text" class="form-control mb-lg-3 mb-3" name="harga-prosesor" id="harga-prosesor" value="Rp 0,00" readonly>
             </div>
         </div>
-        <div class="row mb-3" id="bagian-motherboard">
-            <div class="col-9">
-                <div class="input-group">
+        <div class="row" id="bagian-motherboard">
+            <div class="col-lg-9">
+                <div class="input-group mb-lg-3 mb-1">
                     <span class="input-group-text">Motherboard:</span>
                     <select id="motherboard" class="form-select" onchange="setHarga('motherboard')">
                         <option value="" data-harga="0">Pilih motherboard</option>
                     </select>
                 </div>
             </div>
-            <div class="col-1">
-                <input type="number" class="form-control" name="jumlah-motherboard" id="jumlah-motherboard" value="1" min="0" onchange="setHarga('motherboard')">
+            <div class="col-lg-1">
+                <input type="number" class="form-control mb-lg-3 mb-1" name="jumlah-motherboard" id="jumlah-motherboard" value="1" min="0" onchange="setHarga('motherboard')">
             </div>
-            <div class="col-2">
-                <input type="text" class="form-control" name="harga-motherboard" value="Rp 0,00" id="harga-motherboard" readonly>
+            <div class="col-lg-2">
+                <input type="text" class="form-control mb-lg-3 mb-3" name="harga-motherboard" value="Rp 0,00" id="harga-motherboard" readonly>
             </div>
         </div>
-        <div class="row mb-3" id="bagian-ram">
-            <div class="col-9">
-                <div class="input-group">
+        <div class="row" id="bagian-ram">
+            <div class="col-lg-9">
+                <div class="input-group mb-lg-3 mb-1">
                     <span class="input-group-text">Memori RAM:</span>
                     <select id="ram" class="form-select" onchange="setHarga('ram')">
                         <option value="" data-harga="0">Pilih Memori RAM</option>
@@ -121,18 +121,18 @@
                     </select>
                 </div>
             </div>
-            <div class="col-1">
+            <div class="col-lg-1 mb-lg-3 mb-1">
                 <input type="number" class="form-control" name="jumlah-ram" id="jumlah-ram" value="1" min="0" onchange="setHarga('ram')">
             </div>
-            <div class="col-2">
+            <div class="col-lg-2 mb-lg-3 mb-3">
                 <input type="text" class="form-control" name="harga-ram" value="Rp 0,00" id="harga-ram" readonly>
             </div>
         </div>
         <h6>Komponen lainnya:</h6>
         @foreach ($kategori_lain as $kategori)
-        <div class="row mb-3" id="bagian-{{$kategori->url}}">
-            <div class="col-9">
-                <div class="input-group">
+        <div class="row" id="bagian-{{$kategori->url}}">
+            <div class="col-lg-9">
+                <div class="input-group mb-lg-3 mb-1">
                     <span class="input-group-text">{{$kategori->nama}}:</span>
                     <select id="{{$kategori->url}}" class="form-select" onchange="setHarga('{{$kategori->url}}')">
                         <option value="" data-harga="0">Pilih {{$kategori->nama}}</option>
@@ -148,12 +148,12 @@
                     </select>
                 </div>
             </div>
-            <div class="col-1">
+            <div class="col-lg-1 mb-lg-3 mb-1">
                 <input type="number" class="form-control" name="jumlah-{{$kategori->url}}" id="jumlah-{{$kategori->url}}"
                 value="{{!$edit_kode_invalid && isset($data_simulasi->{'jumlah_'.str_replace('-', '_', $kategori->url)}) ? $data_simulasi->{'jumlah_'.str_replace('-', '_', $kategori->url)} : 1}}"
                 min="0" onchange="setHarga('{{$kategori->url}}')">
             </div>
-            <div class="col-2">
+            <div class="col-lg-2 mb-lg-3 mb-3">
                 <input type="text" class="form-control" name="harga-{{$kategori->url}}" value="Rp 0,00" id="harga-{{$kategori->url}}" readonly>
             </div>
         </div>
