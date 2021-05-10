@@ -14,10 +14,10 @@
             <a href="{{route('user.transaksi.all')}}" class="btn btn-secondary col-12">Riwayat transaksi</a>
         </div>
     </div>
-    <div class="row mb-3">
+    {{-- <div class="row mb-3">
         <div class="col-12">
             <a class="btn btn-primary col-12" href="{{route('user.edit-profile')}}">Edit profil</a>
         </div>
-    </div>
+    </div> --}}
 </x-_content_container>
 @endsection
