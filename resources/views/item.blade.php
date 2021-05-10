@@ -83,7 +83,7 @@
       </div>
       @else
       <div>
-        <h6>Silahkan <a href="{{route('login')}}">Login</a> atau <a href="{{route('register')}}">Daftar</a> untuk menambahkan ke keranjang.</h6>
+        <h6>Silahkan <a href="{{route('auth.google.redirect')}}">Login</a> untuk menambahkan ke keranjang.</h6>
       </div>
       @endif
     </div>
