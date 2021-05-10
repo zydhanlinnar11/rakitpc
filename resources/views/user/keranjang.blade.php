@@ -14,8 +14,18 @@
           <div class="modal-body">
             <ul class="list-group">
               <li class="list-group-item">
-                <input class="form-check-input payment-radio" type="radio" name="1" id="1" data-id="1" checked>
-                Saldo : Rp {{number_format(Auth::user()['saldo'], 2)}} 
+                @foreach ($payment_processors as $payment_processor)
+                <input class="form-check-input payment-radio" type="radio"
+                name="{{$payment_processor['id']}}"
+                id="{{$payment_processor['id']}}" data-id="{{$payment_processor['id']}}"
+                {{$payment_processor['nama'] == 'Saldo' ? 'checked' : ''}}
+                >
+                @if ($payment_processor['nama'] == 'Saldo')
+                Saldo : Rp {{number_format(Auth::user()['saldo'], 2)}}
+                @else
+                {{$payment_processor['nama']}}
+                @endif 
+                @endforeach
               </li>
             </ul>
           </div>
@@ -55,7 +65,10 @@
         <tbody>
           @foreach ($list as $item)
           <tr>
-            <td><input class="form-check-input item-checkbox" type="checkbox" data-jumlah="{{$item['jumlah']}}"
+            <td><input onchange="onChangeCheckBox(this)" class="form-check-input item-checkbox" type="checkbox"
+              data-harga="{{$item['harga']}}"
+              data-jumlah="{{$item['jumlah']}}"
+              data-subtotal="{{$item['jumlah'] * $item['harga']}}"
               data-id="{{$item['id']}}"
             @if (!$item['is_stok_enough'])
             disabled
@@ -71,41 +84,128 @@
             @endif
             </td>
             <td>Rp {{number_format($item['harga'] * $item['jumlah'], 2)}}</td>
-            <td><button class="btn btn-info" onclick="window.open('{{route('item.view')}}?item_id={{$item['id']}}', '_self')">Ubah</button></td>
+            <td><button type="button" class="btn btn-info" onclick="window.open('{{route('item.view')}}?item_id={{$item['id']}}', '_self')">Ubah</button></td>
           </tr>
           @endforeach
         </tbody>
       </table>
 
       <div class="text-end mb-3">
-        <h6>Total pembayaran : Rp {{number_format($jumlah_total_harga, 2)}}</h6>
+        <h6>Total pembayaran : <span id="total-harga">Rp {{number_format(0, 2)}}</span></h6>
       </div>
       <div class="row mb-3">
         <div class="col-12">
-            <button type="reset" class="btn btn-warning col-12"
+            <button id="semua-button" onclick="selectSemua()" type="button" class="btn btn-success col-12"
             @if ($jumlah_total_produk == 0)
                 disabled
             @endif
-            >Batalkan semua pilihan</button>
+            >Pilih semua</button>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-12">
+            <button id="reset-button" onclick="unselectSemua()" type="button" class="btn btn-warning col-12" disabled>Batalkan semua pilihan</button>
         </div>
       </div>
       <div class="row mb-3">
           <div class="col-12">
-              <button type="submit" class="btn btn-primary col-12"
-              @if (!$checkoutable)
-                  disabled
-              @endif
-              >Checkout</button>
+              <button id="checkout-button" type="submit" class="btn btn-primary col-12"
+              disabled>Checkout</button>
           </div>
       </div>
     </form>
 </x-_content_container>
 <script>
+  const isSelected = []
+  let totalHarga = 0
+  const checkboxes = document.getElementsByClassName('item-checkbox')
+  for(let i=0; i<checkboxes.length; i++) {
+    const checkbox = checkboxes[i];
+    if(!checkbox.disabled) isSelected[i] = false
+  }
+
+  function changeButtonBasedOnCheckBox(isNothingChecked, isAllChecked) {
+    const semuaButton = document.getElementById('semua-button')
+    const resetButton = document.getElementById('reset-button')
+    const checkoutButton = document.getElementById('checkout-button')
+    if(isNothingChecked) {
+      checkoutButton.disabled = true
+      resetButton.disabled = true
+      semuaButton.disabled = false
+    }
+    if(!isNothingChecked && !isAllChecked) {
+      checkoutButton.disabled = false
+      resetButton.disabled = false
+      semuaButton.disabled = false
+    }
+    if(isAllChecked) {
+      checkoutButton.disabled = false
+      resetButton.disabled = false
+      semuaButton.disabled = true
+    }
+  }
+
+  function formatHarga(value = 0) {
+    return (new Intl.NumberFormat('ID', {style: 'currency', currency: 'IDR'})).format(value)
+  }
+
+  function updateTotalHarga() {
+    const totalHargaElement = document.getElementById('total-harga')
+    totalHargaElement.innerText = formatHarga(totalHarga)
+  }
+
+  function onChangeCheckBox(checkbox) {
+    let isAllChecked = true
+    let isNothingChecked = true
+    const checkboxes = document.getElementsByClassName('item-checkbox')
+    for(let i=0; i<checkboxes.length; i++) {
+      const checkbox = checkboxes[i];
+      if(!checkbox.disabled && checkbox.checked) isNothingChecked = false
+      if(!checkbox.disabled && !checkbox.checked) isAllChecked = false
+      if(!checkbox.disabled && !isSelected[i] && checkbox.checked) totalHarga += parseInt(checkbox.dataset.subtotal)
+      if(!checkbox.disabled && isSelected[i] && !checkbox.checked) totalHarga -= parseInt(checkbox.dataset.subtotal)
+      isSelected[i] = checkbox.checked
+      if(parseInt(checkbox.dataset.subtotal) !=
+        parseInt(checkbox.dataset.harga) * parseInt(checkbox.dataset.jumlah)) {
+          checkbox.checked = false
+          checkbox.disabled = true
+          isSelected[i] = false
+        }
+      // console.log(parseInt(checkbox.dataset.jumlah))
+      // console.log(parseInt(checkbox.dataset.harga))
+      // console.log(parseInt(checkbox.dataset.subtotal))
+    }
+    changeButtonBasedOnCheckBox(isNothingChecked, isAllChecked)
+    updateTotalHarga()
+  }
+
+  function selectSemua() {
+    const checkboxes = document.getElementsByClassName('item-checkbox')
+    for(let i=0; i<checkboxes.length; i++) {
+      const checkbox = checkboxes[i];
+      if(!checkbox.disabled) {
+        checkbox.checked = true
+        checkbox.dispatchEvent(new Event('change'))
+      }
+    }
+  }
+
+  function unselectSemua() {
+    const checkboxes = document.getElementsByClassName('item-checkbox')
+    for(let i=0; i<checkboxes.length; i++) {
+      const checkbox = checkboxes[i];
+      if(!checkbox.disabled) {
+        checkbox.checked = false
+        checkbox.dispatchEvent(new Event('change'))
+      }
+    }
+  }
+
   function addSelectedItemToArray(data) {
     const checkboxes = document.getElementsByClassName('item-checkbox')
     for(let i=0; i<checkboxes.length; i++) {
       const checkbox = checkboxes[i];
-      if(checkbox.checked) {
+      if(checkbox.checked && !checkbox.disabled) {
         const item = {  }
         item[`${checkbox.dataset.id}`] = checkbox.dataset.jumlah
         data.push(item)

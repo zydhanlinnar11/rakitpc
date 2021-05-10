@@ -111,11 +111,11 @@
         if(ajax.readyState == ajax.DONE && ajax.status == 200) {
           document.getElementById('hapus-button').disabled = false
           document.getElementById('kurangi-button').disabled = false
-          document.getElementById('jumlah-di-keranjang').dataset.jumlah++
+          document.getElementById('jumlah-di-keranjang').dataset.jumlah = parseInt(document.getElementById('jumlah-di-keranjang').dataset.jumlah) + 1
           document.getElementById('jumlah-di-keranjang').innerText = document.getElementById('jumlah-di-keranjang').dataset.jumlah
         }
-        if(document.getElementById('jumlah-di-keranjang').dataset.jumlah >=
-          document.getElementById('jumlah-di-keranjang').dataset.maks) {
+        if(parseInt(document.getElementById('jumlah-di-keranjang').dataset.jumlah) >=
+          parseInt(document.getElementById('jumlah-di-keranjang').dataset.maks)) {
           document.getElementById('tambah-button').disabled = true
         }
       }
@@ -134,15 +134,15 @@
           "Produk berhasil dikurangi dari keranjang" : "Produk gagal dikurangi dari keranjang")
         }
         if(ajax.readyState == ajax.DONE && ajax.status == 200) {
-          document.getElementById('jumlah-di-keranjang').dataset.jumlah--
+          document.getElementById('jumlah-di-keranjang').dataset.jumlah = parseInt(document.getElementById('jumlah-di-keranjang').dataset.jumlah) - 1
           document.getElementById('jumlah-di-keranjang').innerText = document.getElementById('jumlah-di-keranjang').dataset.jumlah
         }
         if(document.getElementById('jumlah-di-keranjang').dataset.jumlah == 0) {
           document.getElementById('hapus-button').disabled = true
           document.getElementById('kurangi-button').disabled = true
         }
-        if(document.getElementById('jumlah-di-keranjang').dataset.jumlah >=
-          document.getElementById('jumlah-di-keranjang').dataset.maks) {
+        if(parseInt(document.getElementById('jumlah-di-keranjang').dataset.jumlah) <
+          parseInt(document.getElementById('jumlah-di-keranjang').dataset.maks)) {
           document.getElementById('tambah-button').disabled = false
         }
       }
@@ -168,8 +168,8 @@
           document.getElementById('hapus-button').disabled = true
           document.getElementById('kurangi-button').disabled = true
         }
-        if(document.getElementById('jumlah-di-keranjang').dataset.jumlah >=
-          document.getElementById('jumlah-di-keranjang').dataset.maks) {
+        if(parseInt(document.getElementById('jumlah-di-keranjang').dataset.jumlah) <
+          parseInt(document.getElementById('jumlah-di-keranjang').dataset.maks)) {
           document.getElementById('tambah-button').disabled = false
         }
       }

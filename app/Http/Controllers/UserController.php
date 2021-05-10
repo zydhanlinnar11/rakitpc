@@ -55,9 +55,10 @@ class UserController extends Controller
             $jumlah_total_produk = 0;
             $jumlah_total_harga = 0;
             $is_stok_enough = true;
+            $payment_processors = PaymentProcessor::all();
             if($keranjang == NULL) {
                 $checkoutable = false;
-                return view('user.keranjang', compact('jumlah_total_harga', 'list', 'checkoutable', 'is_stok_enough', 'jumlah_total_produk'));
+                return view('user.keranjang', compact('jumlah_total_harga', 'list', 'checkoutable', 'is_stok_enough', 'jumlah_total_produk', 'payment_processors'));
             }
             foreach ($keranjang as $key => $value) {
                 $produk = item::find($key);
@@ -78,7 +79,7 @@ class UserController extends Controller
             }
             // return $list;
             $checkoutable = $jumlah_total_produk > 0 && $is_stok_enough;
-            return view('user.keranjang', compact('jumlah_total_harga', 'list', 'checkoutable', 'is_stok_enough', 'jumlah_total_produk'));
+            return view('user.keranjang', compact('jumlah_total_harga', 'list', 'checkoutable', 'is_stok_enough', 'jumlah_total_produk', 'payment_processors'));
         } catch (Exception $e) {
             dd($e);
         }
