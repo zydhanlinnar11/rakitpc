@@ -24,8 +24,10 @@
         @foreach ($list_produk as $key)
         <x-_list_item_card :key="$key">
             <x-slot name="button1">
-                <a href="/admin/edit-produk?id={{$key->id}}" class="btn btn-primary">Edit produk</a>
-                <a href="/item?item_id={{$key->id}}" class="btn btn-secondary mt-2">Lihat produk</a>
+                <a href="/admin/edit-produk?id={{$key->id}}" class="btn btn-primary">Edit</a>
+            </x-slot>
+            <x-slot name="button2">
+                <a href="/item?item_id={{$key->id}}" class="btn btn-secondary">Lihat</a>
             </x-slot>
         </x-_list_item_card>
         @endforeach

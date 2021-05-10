@@ -11,7 +11,7 @@
             <button type="reset" id="reset-button" class="btn btn-warning mb-3 col-12">Reset</button>
           </x-slot>
           <x-slot name="right_button">
-            <button type="submit" id="tambah-button" class="btn btn-primary mb-3 col-12">Tambahkan</button>
+            <button type="submit" id="tambah-button" class="btn btn-primary mb-3 col-12">Tambah</button>
           </x-slot>
         </x-_admin_subkategori_form>
     </form>
