@@ -135,3 +135,67 @@ footer {
     margin: auto;
     width: 50%;
 }
+
+#nav-button-sidebar {
+    visibility: hidden;
+    position: absolute;
+}
+
+#side-bar {
+    width: 320px;
+    background: white;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transform: translateX(100%);
+    transition: all var(--transition-delay);
+}
+
+.side-button {
+    height: 48px;
+    background: rgba(0, 0, 0, 0);
+    border: none;
+}
+
+.side-button:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.side-horizontal-divider {
+    width: 100%;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+#side-bar-block {
+    width: 100%;
+    height: 100%;
+    top: 64px;
+    position: fixed;
+    z-index: 101;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    /* align-content: flex-end; */
+    background: rgba(0, 0, 0, 0);
+    transition: background var(--transition-delay);
+    display: none;
+}
+
+@media only screen and (max-width: 900px) {
+    .nav-button {
+        visibility: hidden;
+        position: absolute;
+    }
+
+    .nav-vertical-divider {
+        visibility: hidden;
+        position: absolute;
+    }
+
+    #nav-button-sidebar {
+        visibility: visible;
+        margin-right: 108px;
+    }
+}

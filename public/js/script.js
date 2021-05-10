@@ -234,3 +234,32 @@ function getToken(callback, csrf_token) {
     xhrForToken.setRequestHeader("X-CSRF-TOKEN", csrf_token);
     xhrForToken.send();
 }
+
+function openSidebar(sideBlock, sideBar) {
+    sideBlock.style.display = "flex";
+    setTimeout(() => {
+        sideBlock.style.background = "rgba(0, 0, 0, 0.3)";
+        sideBar.style.transform = "translateX(0)";
+    }, 100);
+}
+
+function closeSidebar(sideBlock, sideBar) {
+    sideBlock.style.background = "rgba(0, 0, 0, 0.0)";
+    sideBar.style.transform = "translateX(100%)";
+    setTimeout(() => {
+        sideBlock.style.display = "none";
+    }, 300);
+}
+
+function openCloseNavbar() {
+    const sideBlock = document.getElementById("side-bar-block");
+    const sideBar = document.getElementById("side-bar");
+    const isOpen = sideBlock.style.display == "flex";
+    if (!isOpen) openSidebar(sideBlock, sideBar);
+    else closeSidebar(sideBlock, sideBar);
+}
+
+function onClickShadow(event = new MouseEvent()) {
+    const sideBlock = document.getElementById("side-bar-block");
+    if (event.screenX <= sideBlock.clientWidth - 320) openCloseNavbar();
+}

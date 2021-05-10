@@ -19,5 +19,6 @@
         <div class="nav-vertical-divider"></div>
         <button onclick="window.open('{{route('login')}}', '_self')" class="nav-button" id="nav-button-login">Login</button>
         @endif
+        <button onclick="openCloseNavbar()" class="nav-button" id="nav-button-sidebar">Menu</button>
     </nav>
 </header>

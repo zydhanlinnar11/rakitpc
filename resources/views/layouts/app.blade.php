@@ -15,6 +15,7 @@
 </head>
 <body>
     <x-header />
+    <x-sidebar />
 
     <main>
         @section('main-content')
