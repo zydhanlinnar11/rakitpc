@@ -637,8 +637,8 @@ Route::name('simulasi.')->prefix('simulasi')->group(function () {
     
         try {
             $tabel_data_simulasi = DB::table('data_simulasi');
-            $array_simulasi['created_at'] = DB::raw('now()');
-            $array_simulasi['updated_at'] = DB::raw('now()');
+            $array_simulasi['created_at'] = now(new DateTimeZone('Asia/Jakarta'));
+            $array_simulasi['updated_at'] = now(new DateTimeZone('Asia/Jakarta'));
             $tabel_data_simulasi->upsert($array_simulasi, ['id']);
         } catch (QueryException $e) {
             return response()->json(["message" => "Database error."], 500);
@@ -676,7 +676,7 @@ Route::name('simulasi.')->prefix('simulasi')->group(function () {
     
         try {
             $tabel_data_simulasi = DB::table('data_simulasi');
-            $array_simulasi['updated_at'] = DB::raw('now()');
+            $array_simulasi['updated_at'] = now(new DateTimeZone('Asia/Jakarta'));
             $tabel_data_simulasi->upsert($array_simulasi, ['id'], $update_column);
         } catch (QueryException $e) {
             return response()->json(["message" => "Database error."], 500);
