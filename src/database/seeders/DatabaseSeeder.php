@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,10 +14,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\User::factory(10)->create();
-        \App\Models\kategori::factory(5)->create();
-        \App\Models\Brand::factory(5)->create();
-        \App\Models\Subcategory::factory(5)->create();
-        \App\Models\item::factory(20)->create();
+        DB::table('roles')->insert(['id' => 1, 'nama' => 'pembeli', 'id' => 2, 'nama' => 'admin']);
+
+        // \App\Models\User::factory(10)->create();
+        // \App\Models\kategori::factory(5)->create();
+        // \App\Models\Brand::factory(5)->create();
+        // \App\Models\Subcategory::factory(5)->create();
+        // \App\Models\item::factory(20)->create();
+
     }
 }
