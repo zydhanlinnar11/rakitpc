@@ -14,7 +14,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('roles')->insert(['id' => 1, 'nama' => 'pembeli', 'id' => 2, 'nama' => 'admin']);
+        DB::table('roles')->insert(['id' => 1, 'nama' => 'admin']);
+        DB::table('roles')->insert(['id' => 2, 'nama' => 'pembeli']);
 
         // \App\Models\User::factory(10)->create();
         // \App\Models\kategori::factory(5)->create();
