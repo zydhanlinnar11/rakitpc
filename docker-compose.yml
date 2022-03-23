@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  rakitpc:
+    container_name: rakitpc
+    image: zydhanlinnar11/laravel-docker-image:latest
+    volumes:
+      - ./src:/var/www/html
+      - ./database:/database
+    env_file: .env
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    networks:
+      - nginx-proxy-network
+
+networks:
+  nginx-proxy-network:
+    external: true
