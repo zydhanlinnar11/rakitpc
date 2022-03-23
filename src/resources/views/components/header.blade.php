@@ -17,7 +17,7 @@
         <button onclick="window.open('{{route('logout')}}', '_self')" class="nav-button" id="nav-button-logout">Log out</button>
         @else
         <div class="nav-vertical-divider"></div>
-        <button onclick="window.open('{{route('auth.google.redirect')}}', '_self')" class="nav-button" id="nav-button-login">Login</button>
+        <button onclick="window.open('{{route('login')}}', '_self')" class="nav-button" id="nav-button-login">Login</button>
         @endif
         <button onclick="openCloseNavbar()" class="nav-button" id="nav-button-sidebar">Menu</button>
     </nav>
