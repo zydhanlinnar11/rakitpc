@@ -16,8 +16,8 @@ class CreateProcessorSocketsTable extends Migration
         Schema::create('processor_sockets', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->foreignId('id_processor_brand');
-            $table->foreign('id_processor_brand')->references('id')->on('processor_brands');
+            $table->foreignId('id_brand');
+            $table->foreign('id_brand')->references('id')->on('brands');
             $table->timestamps();
         });
     }

@@ -21,9 +21,9 @@ class CreateItemsTable extends Migration
             $table->integer('harga', false, true);
             $table->string('url_gambar');
             $table->foreignId('id_kategori');
-            $table->foreign('id_kategori')->references('id')->on('kategoris');
+            $table->foreign('id_kategori')->references('id')->on('kategoris')->onDelete('cascade');
             $table->foreignId('id_brand');
-            $table->foreign('id_brand')->references('id')->on('brands');
+            $table->foreign('id_brand')->references('id')->on('brands')->onDelete('cascade');
             $table->foreignId('id_subkategori');
             $table->foreign('id_subkategori')->references('id')->on('subcategories');
             $table->timestamps();

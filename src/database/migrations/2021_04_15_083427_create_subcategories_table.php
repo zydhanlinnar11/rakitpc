@@ -19,7 +19,7 @@ class CreateSubcategoriesTable extends Migration
             $table->string('slug');
             $table->string('deskripsi');
             $table->foreignId('id_kategori');
-            $table->foreign('id_kategori')->references('id')->on('kategoris');
+            $table->foreign('id_kategori')->references('id')->on('kategoris')->onDelete('cascade');
             $table->timestamps();
         });
     }

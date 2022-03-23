@@ -15,8 +15,6 @@ class CreatePaymentRequestsTable extends Migration
     {
         Schema::create('payment_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_transaksi');
-            $table->foreign('id_transaksi')->references('id')->on('transactions');
             $table->timestamps();
         });
     }
