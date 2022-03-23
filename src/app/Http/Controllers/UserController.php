@@ -12,9 +12,11 @@ use App\Models\Transaction;
 use App\Models\User;
 use DateTimeZone;
 use Exception;
+use Faker\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Ui\Presets\React;
 
@@ -254,6 +256,33 @@ class UserController extends Controller
         }
         $user_on_db['avatar_url'] = $user->getAvatar();
         $user_on_db['name'] = $user->getName();
+        if(!isset($user_on_db['email_verified_at']) || $user_on_db['email_verified_at'] == NULL)
+            $user_on_db['email_verified_at'] = now(new DateTimeZone('Asia/Jakarta'));
+        $user_on_db->save();
+        Auth::login($user_on_db, true);
+        $request->session()->regenerate();
+        return redirect()->intended();
+    }
+
+    function login_with_zydhan_web(Request $request) {
+        $validated = $request->validate(['token' => 'required|string']);
+
+        $res = Http::withHeaders([
+            'accept' => 'application/json',
+        ])->get("https://api.zydhan.xyz/apps/user-info?token=" . $validated['token']);
+
+        if($res->status() !== 200) return response()->json($res->json(), $res->status());
+
+        $user = $res->json();
+
+        $user_on_db = User::where('email', $user['email'])->first();
+        if($user_on_db == null) {
+            $user_on_db = new User();
+            $user_on_db['email'] = $user['email'];
+            $user_on_db['password'] = Hash::make(Factory::create()->password(20));
+        }
+        $user_on_db['avatar_url'] = $user['avatar_url'];
+        $user_on_db['name'] = $user['name'];
         if(!isset($user_on_db['email_verified_at']) || $user_on_db['email_verified_at'] == NULL)
             $user_on_db['email_verified_at'] = now(new DateTimeZone('Asia/Jakarta'));
         $user_on_db->save();

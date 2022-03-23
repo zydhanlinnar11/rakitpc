@@ -77,15 +77,11 @@ Route::middleware(['auth'])->name('user.')->prefix('user')->group(function () {
     });
 });
 
-Route::get('/auth/google/redirect', function () {
-    return Socialite::driver('google')->redirect();
-})->name('auth.google.redirect');
-
 Route::get('/login', function(){
-    return redirect(route('auth.google.redirect'));
+    return redirect("https://zydhan.xyz/apps/authorize?response_type=token&app_id=" . env('APP_ID') . "&redirect_uri=https%3A%2F%2Frakitpc.zydhan.xyz%2Fauth%2Fzydhan-web%2Fcallback");
 })->name('login');
 
-Route::get('/auth/google/callback', [UserController::class, 'login_with_google'])->name('auth.login.google');
+Route::get('/auth/zydhan-web/callback', [UserController::class, 'login_with_zydhan_web'])->name('auth.login.zydhan_web');
 
 Route::get('/auth/logout', [UserController::class, 'logout'])->name('logout');
 
