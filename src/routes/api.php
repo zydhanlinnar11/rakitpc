@@ -642,9 +642,8 @@ Route::get('/simulasi-kompatibilitas', function(Request $request) {
 
 Route::name('simulasi.')->prefix('simulasi')->group(function () {
     Route::post('/', function(Request $request) {
-        $uid = Base64UID::generate(11);
-        $slug_barang = ['prosesor', 'motherboard', 'ram', 'hard_disk', 'ssd', 'casing'
-                            , 'graphics_card', 'power-supply', 'keyboard', 'mouse', 'monitor', 'cpu_cooler', 'software'];
+        $uid = Base64UID::generate(11);        
+        $slug_barang = ['prosesor', 'motherboard', 'ram', 'ssd', 'power_supply'];
     
         $array_simulasi = [
             'id_simulasi' => $uid,
@@ -673,8 +672,7 @@ Route::name('simulasi.')->prefix('simulasi')->group(function () {
     
     Route::patch('/', function(Request $request) {
         $uid = $request->query('kode_simulasi');
-        $slug_barang = ['prosesor', 'motherboard', 'ram', 'hard_disk', 'ssd', 'casing'
-                            , 'graphics_card', 'power_supply', 'keyboard', 'mouse', 'monitor', 'cpu_cooler', 'software'];
+        $slug_barang = ['prosesor', 'motherboard', 'ram', 'ssd', 'power_supply'];
     
         $array_simulasi = [
             'id_simulasi' => $uid,
@@ -702,8 +700,9 @@ Route::name('simulasi.')->prefix('simulasi')->group(function () {
         try {
             $tabel_data_simulasi = DB::table('data_simulasi');
             $array_simulasi['updated_at'] = now(new DateTimeZone('Asia/Jakarta'));
-            $tabel_data_simulasi->upsert($array_simulasi, ['id'], $update_column);
+            $tabel_data_simulasi->updateOrInsert(['id_simulasi' => $uid], $array_simulasi, $update_column);
         } catch (QueryException $e) {
+            if(config('app.debug')) dd($e);
             return response()->json(["message" => "Database error."], 500);
         }
         return response()->json(["kodeSimulasi" => $uid], 200);

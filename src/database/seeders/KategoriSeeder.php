@@ -30,8 +30,8 @@ class KategoriSeeder extends Seeder
             ],
             [
                 'id' => 3,
-                'nama' => 'Storage',
-                'url' => 'Storage',
+                'nama' => 'SSD',
+                'url' => 'ssd',
                 'fa_class' => 'fas fa-hdd'
             ],
             [
@@ -42,8 +42,8 @@ class KategoriSeeder extends Seeder
             ],
             [
                 'id' => 5,
-                'nama' => 'Memory',
-                'url' => 'memory',
+                'nama' => 'Memory RAM',
+                'url' => 'memory-ram',
                 'fa_class' => 'fas fa-memory'
             ],
         ]);

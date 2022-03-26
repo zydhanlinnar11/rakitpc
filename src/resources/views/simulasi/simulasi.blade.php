@@ -178,8 +178,7 @@
     let totalHarga = 0
     const harga = {}
     let kompatibilitas = document.getElementById('kompatibilitas').value
-    const slugBarang = ['prosesor', 'motherboard', 'ram', 'hard-disk', 'ssd', 'casing'
-    , 'graphics-card', 'power-supply', 'keyboard', 'mouse', 'monitor', 'cpu-cooler', 'software']
+    const slugBarang = ['prosesor', 'motherboard', 'ram', 'ssd', 'power-supply']
     const xhr = new XMLHttpRequest()
 
     // Kalo ngedit
