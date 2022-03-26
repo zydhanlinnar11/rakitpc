@@ -31,6 +31,7 @@ Route::get('/subkategori', function(Request $request) {
     
         return $tabel_subkategori;
     } catch (QueryException $e) {
+        if(config('app.debug') === true) dd($e);
         return response()->json(["message" => "Couldn't connect to database."], 500);
     }
 });
@@ -45,6 +46,7 @@ Route::get('/items', function (Request $request) {
         }
         return $items->get();
     } catch (QueryException $e) {
+        if(config('app.debug') === true) dd($e);
         return response()->json(["message" => "Couldn't connect to database."], 500);
     }
 });
@@ -53,6 +55,7 @@ Route::get('/kategori', function () {
     try {
         return DB::table('kategoris')->get();
     } catch (QueryException $e) {
+        if(config('app.debug') === true) dd($e);
         return response()->json(["message" => "Couldn't connect to database."], 500);
     }
 });
@@ -76,13 +79,14 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
                     'message' => 'Row has already exists.'
                 ], 400);
         
-            $tabel_kategori->upsert(
+            $tabel_kategori->insert(
                 ['nama' => $nama, 'url' => $slug,  'fa_class' => $fa_class], ['url']
             );
             return response()->json([
                 'message' => 'Category added.'
             ], 200);
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             return response()->json(["message" => "Couldn't connect to database."], 500);
         }
     
@@ -114,6 +118,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
                 'message' => 'Category edited.'
             ], 200);
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             return response()->json(["message" => "Couldn't connect to database."], 500);
         }
         
@@ -138,6 +143,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
             
             $kategori->delete();
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             if($e->getCode() == 2002) return response()->json(["message" => "Couldn't connect to database."], 500);
             return response()->json(["message" => $e->getMessage()], 500); 
         }
@@ -173,6 +179,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
             );
             return response()->json(['message' => 'Subcategory added.'], 200);
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             return response()->json(["message" => "Couldn't connect to database."], 500);
         }
     });
@@ -208,6 +215,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
             );
             return response()->json(['message' => 'Subcategory edited.'], 200);
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             return response()->json(["message" => "Couldn't connect to database."], 500);
         }
     });
@@ -228,6 +236,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
             
             $subkategori->delete();
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             if($e->getCode() == 2002) return response()->json(["message" => "Couldn't connect to database."], 500);
             return response()->json(["message" => $e->getMessage()], 500); 
         }
@@ -258,6 +267,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
             );
             return response()->json(['message' => 'Socket added.'], 200);
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             return response()->json(["message" => "Couldn't connect to database."], 500);
         }
     });
@@ -288,6 +298,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
             );
             return response()->json(['message' => 'Socket edited.'], 200);
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             return response()->json(["message" => "Couldn't connect to database."], 500);
         }
     });
@@ -304,6 +315,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
             $tabel_socket->where('id', '=', $id)->delete();
             return response()->json(['message' => 'Socket deleted.'], 200);
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             return response()->json(["message" => "Couldn't connect to database."], 500);
         }
     });
@@ -332,6 +344,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
             );
             return response()->json(['message' => 'Brand added.'], 200);
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             return response()->json(["message" => "Couldn't connect to database."], 500);
         }
     });
@@ -362,6 +375,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
             );
             return response()->json(['message' => 'Brand edited.'], 200);
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             return response()->json(["message" => "Couldn't connect to database."], 500);
         }
     });
@@ -382,6 +396,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
             
             $brand->delete();
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             if($e->getCode() == 2002) return response()->json(["message" => "Couldn't connect to database."], 500);
             return response()->json(["message" => $e->getMessage()], 500); 
         }
@@ -404,6 +419,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
         try {
             $tabel_item = DB::table('items');
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             return response()->json(["message" => "Couldn't connect to database."], 500);
         }
     
@@ -431,6 +447,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
             if($tabel_item->where('nama', '=', $nama)->get()->count() > 0)
                 return response()->json(['message' => 'Product already exists.'], 400);
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             return response()->json(["message" => "Couldn't connect to database."], 500);
         }
     
@@ -453,6 +470,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
         try {
             $tabel_item->upsert($obj, ['nama']);
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             return response()->json(["message" => "Couldn't connect to database."], 500);
         }
     
@@ -476,6 +494,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
         try {
             $tabel_item = DB::table('items');
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             return response()->json(["message" => "Couldn't connect to database."], 500);
         }
     
@@ -500,6 +519,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
         try {
             $url_kategori = DB::table('kategoris')->where('id', '=', $id_kategori)->get()[0]->url;
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             return response()->json(["message" => "Couldn't connect to database."], 500);
         }
         if($id_socket == null && ($url_kategori == 'prosesor' || $url_kategori == 'motherboard'))
@@ -523,6 +543,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
         try {
             $item = $tabel_item->select(['id'])->where('id', '=', $id)->get()->count();
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             return response()->json(["message" => "Couldn't connect to database."], 500);
         }
         if($item == 0)
@@ -552,6 +573,7 @@ Route::middleware('auth:sanctum')->name('admin.')->prefix('admin')->group(functi
                 return response()->json(["message" => "Produk id ".strval($id)." terdapat duplikat"], 400);
             $produk->delete();
         } catch (QueryException $e) {
+            if(config('app.debug') === true) dd($e);
             return response()->json(["message" => "Couldn't connect to database."], 500);
         }
         return response()->json(["message" => "Item deleted."], 200);
@@ -566,6 +588,7 @@ Route::get('/socket', function(Request $request) {
             $list_socket = $list_socket->where('id_brand', '=', $id_brand);
         $list_socket = $list_socket->get();
     } catch (QueryException $e) {
+        if(config('app.debug') === true) dd($e);
         return response()->json(["message" => "Couldn't connect to database."], 500);
     }
     
@@ -575,11 +598,12 @@ Route::get('/socket', function(Request $request) {
 Route::get('/prosesor', function(Request $request) {
     $id_socket = $request->id_socket;
     try {
-        $list_prosesor = DB::table('items')->select(['id', 'nama', 'harga', 'stok'])->where('id_kategori', '=', 12);
+        $list_prosesor = DB::table('items')->select(['id', 'nama', 'harga', 'stok'])->where('id_kategori', '=', 1);
         if($id_socket != null)
             $list_prosesor = $list_prosesor->where('id_socket', '=', $id_socket);
         $list_prosesor = $list_prosesor->get();
     } catch (QueryException $e) {
+        if(config('app.debug') === true) dd($e);
         return response()->json(["message" => "Couldn't connect to database."], 500);
     }
     
@@ -589,11 +613,12 @@ Route::get('/prosesor', function(Request $request) {
 Route::get('/motherboard', function(Request $request) {
     $id_socket = $request->id_socket;
     try {
-        $list_motherboard = DB::table('items')->select(['id', 'nama', 'harga', 'stok'])->where('id_kategori', '=', 13);
+        $list_motherboard = DB::table('items')->select(['id', 'nama', 'harga', 'stok'])->where('id_kategori', '=', 2);
         if($id_socket != null)
             $list_motherboard = $list_motherboard->where('id_socket', '=', $id_socket);
         $list_motherboard = $list_motherboard->get();
     } catch (QueryException $e) {
+        if(config('app.debug') === true) dd($e);
         return response()->json(["message" => "Couldn't connect to database."], 500);
     }
     
