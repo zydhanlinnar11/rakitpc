@@ -78,7 +78,7 @@ Route::middleware(['auth'])->name('user.')->prefix('user')->group(function () {
 });
 
 Route::get('/login', function(){
-    return redirect("https://zydhan.xyz/apps/authorize?response_type=token&app_id=" . '272d6db6-79b2-4e17-897f-c43c2b1819c2' . "&redirect_uri=https%3A%2F%2Frakitpc.zydhan.xyz%2Fauth%2Fzydhan-web%2Fcallback");
+    return redirect("https://zydhan.com/apps/authorize?response_type=token&app_id=" . '272d6db6-79b2-4e17-897f-c43c2b1819c2' . "&redirect_uri=https%3A%2F%2Frakitpc.zydhan.com%2Fauth%2Fzydhan-web%2Fcallback");
 })->name('login');
 
 Route::get('/auth/zydhan-web/callback', [UserController::class, 'login_with_zydhan_web'])->name('auth.login.zydhan_web');

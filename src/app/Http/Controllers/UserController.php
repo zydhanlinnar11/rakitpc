@@ -269,7 +269,7 @@ class UserController extends Controller
 
         $res = Http::withHeaders([
             'accept' => 'application/json',
-        ])->get("https://api.zydhan.xyz/apps/user-info?token=" . $validated['token']);
+        ])->get("https://api.zydhan.com/apps/user-info?token=" . $validated['token']);
 
         if($res->status() !== 200) return response()->json($res->json(), $res->status());
 
